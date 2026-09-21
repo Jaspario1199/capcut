@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m capcut_recreate.cli:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python -c:*)",
+      "Bash(capcut-recreate:*)",
+      "Bash(capcut:*)",
+      "Bash(capcut.cmd:*)",
+      "Bash(ffprobe:*)",
+      "Bash(ffmpeg:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(git pull:*)",
+      "Bash(git fetch:*)",
+      "Bash(dir:*)",
+      "Bash(ls:*)",
+      "Bash(Get-ChildItem:*)",
+      "Read",
+      "Write(chunks/**)",
+      "Write(plan.json)",
+      "Write(work/**)",
+      "Write(*.json)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(Remove-Item:*)",
+      "Bash(git push --force:*)"
+    ]
+  }
+}
