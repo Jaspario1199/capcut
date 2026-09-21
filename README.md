@@ -78,6 +78,11 @@ corrections, the slot manifest, the footage index, the JSON schema the plan
 must match, and the path of every thumbnail. Any model that can read files
 can plan from it.
 
+Big templates (tens of slots) are planned in time windows: `prompt ... --chunk 12 -o chunks`
+writes one prompt and one sub-manifest per window, each chunk is planned and
+checked on its own, and `merge-plans chunks/*.plan.json --job NAME -o plan.json`
+stitches them for the final check and apply.
+
 ### With an API key: `plan`
 
 ```bash

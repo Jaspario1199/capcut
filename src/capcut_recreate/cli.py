@@ -3,6 +3,8 @@
   capcut-recreate manifest  <template-dir> [-o manifest.json] [--thumbs DIR]
   capcut-recreate index     <staging-dir> <clip>... [-o footage.json]
   capcut-recreate prompt    <manifest.json> <footage.json> --job NAME --brief TEXT [-o prompt.json]   (no API: for Claude Code / any LLM)
+  capcut-recreate prompt    ... --chunk 12 -o chunks/     writes chunk_XX.prompt.json + chunk_XX.manifest.json per time window
+  capcut-recreate merge-plans chunks/*.plan.json --job NAME -o plan.json
   capcut-recreate plan      <manifest.json> <footage.json> --job NAME --brief TEXT [-o plan.json]     (Anthropic API)
   capcut-recreate check     <manifest.json> <footage.json> <plan.json>
   capcut-recreate apply     <manifest.json> <footage.json> <plan.json> --store <drafts-dir> [--brief TEXT]
@@ -96,15 +98,48 @@ def cmd_plan(a) -> int:
 
 
 def cmd_prompt(a) -> int:
-    """Write the planner input for an LLM that is not called through the API."""
-    from .planner import export_prompt
+    """Write the planner input for an LLM that is not called through the API.
+
+    With --chunk N, writes a directory of chunk_XX.prompt.json + chunk_XX.manifest.json
+    pairs, each covering a time window of at most N replaceable media slots.
+    """
+    from .planner import chunk_manifest, export_prompt
 
     manifest, index = _load_two(a)
     lib = _lib(a)
     examples = lib.find_examples(load_doc(Path(manifest.template_dir)), k=a.examples) if a.examples else []
-    out = export_prompt(manifest, index, a.brief, examples, a.job)
-    _dump(out, a.out)
-    print(json.dumps({"images": len(out["images"]), "examples_used": len(examples)}), file=sys.stderr)
+    if not a.chunk:
+        out = export_prompt(manifest, index, a.brief, examples, a.job)
+        _dump(out, a.out)
+        print(json.dumps({"images": len(out["images"]), "examples_used": len(examples)}), file=sys.stderr)
+        return 0
+    out_dir = Path(a.out or "chunks")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    chunks = chunk_manifest(manifest, max_media=a.chunk)
+    written = []
+    for i, ch in enumerate(chunks):
+        lo = min((s.target_start_us for s in ch.media + ch.text), default=0) / 1e6
+        hi = max((s.target_start_us + s.target_duration_us for s in ch.media + ch.text), default=0) / 1e6
+        note = (f"This is chunk {i + 1} of {len(chunks)}, covering timeline {lo:.1f}s to {hi:.1f}s of a "
+                f"{manifest.duration_us / 1e6:.1f}s video. Plan only the slots listed here; other chunks cover the rest. "
+                f"Keep continuity with the brief across chunks.")
+        pr = export_prompt(ch, index, a.brief, examples, a.job, chunk_note=note)
+        (out_dir / f"chunk_{i:02d}.prompt.json").write_text(json.dumps(pr, indent=2, ensure_ascii=False) + "\n")
+        (out_dir / f"chunk_{i:02d}.manifest.json").write_text(json.dumps(ch.to_json(), indent=2, ensure_ascii=False) + "\n")
+        written.append({"chunk": i, "media_replaceable": sum(1 for s in ch.media if s.status == "replaceable"),
+                        "text_replaceable": sum(1 for s in ch.text if s.status == "replaceable"),
+                        "images": len(pr["images"]), "window_s": [round(lo, 1), round(hi, 1)]})
+    _dump({"out_dir": str(out_dir), "chunks": written, "examples_used": len(examples)}, None)
+    return 0
+
+
+def cmd_merge_plans(a) -> int:
+    from .planner import merge_plans
+
+    plans = [Plan.from_json(json.loads(Path(p).read_text())) for p in a.plans]
+    merged = merge_plans(plans, a.job)
+    _dump({"job_name": merged.job_name, "media": [m.__dict__ for m in merged.media],
+           "text": [t.__dict__ for t in merged.text]}, a.out)
     return 0
 
 
@@ -208,7 +243,11 @@ def main(argv: list[str] | None = None) -> int:
 
     s = sub.add_parser("prompt"); s.add_argument("manifest"); s.add_argument("footage"); s.add_argument("--job", required=True)
     s.add_argument("--brief", required=True); s.add_argument("-o", "--out"); s.add_argument("--examples", type=int, default=3); lib_arg(s)
+    s.add_argument("--chunk", type=int, default=0, help="max replaceable media slots per chunk; writes a directory")
     s.set_defaults(fn=cmd_prompt)
+
+    s = sub.add_parser("merge-plans"); s.add_argument("plans", nargs="+"); s.add_argument("--job", required=True)
+    s.add_argument("-o", "--out"); s.set_defaults(fn=cmd_merge_plans)
 
     s = sub.add_parser("check"); s.add_argument("manifest"); s.add_argument("footage"); s.add_argument("plan"); s.set_defaults(fn=cmd_check)
 
