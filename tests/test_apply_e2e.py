@@ -36,7 +36,7 @@ def test_apply_roundtrip(manifest, footage_index, store, template_dir):
     p = plan()
     errors, resolved = validate_plan(p, manifest, footage_index)
     assert errors == []
-    report = apply_plan(p, manifest, resolved, store, template_dir=template_dir)
+    report = apply_plan(p, manifest, resolved, store, template_dir=template_dir, force_write=True)
     assert report.ok, (report.invariant_errors, report.diff_violations)
     assert report.batch["succeeded"] == 3
 
@@ -92,7 +92,7 @@ def test_basename_collision_is_safe(manifest, footage_index, store, template_dir
     p = plan(job="collide", clip_a=idx.clips[0].clip_id, clip_pip=idx.clips[1].clip_id)
     errors, resolved = validate_plan(p, manifest, idx)
     assert errors == []
-    report = apply_plan(p, manifest, resolved, store, template_dir=template_dir)
+    report = apply_plan(p, manifest, resolved, store, template_dir=template_dir, force_write=True)
     assert report.ok
     doc = load_doc(Path(report.job_dir))
     paths = {m["id"]: Path(m["path"]) for m in doc["materials"]["videos"]}
@@ -114,7 +114,7 @@ def test_failed_apply_cleans_up(manifest, footage_index, store, template_dir, mo
     p = plan(job="doomed")
     _, resolved = validate_plan(p, manifest, footage_index)
     with pytest.raises(ApplyError):
-        apply_plan(p, manifest, resolved, store, template_dir=template_dir)
+        apply_plan(p, manifest, resolved, store, template_dir=template_dir, force_write=True)
     assert not (store / "doomed").exists()
     root = json.loads((store / "root_meta_info.json").read_text())
     assert all(e["draft_name"] != "doomed" for e in root["all_draft_store"])

@@ -200,7 +200,7 @@ def test_apply_records_to_library(manifest, footage_index, store, template_dir, 
     plan = Plan.from_json(GOOD_PLAN)
     _, resolved = validate_plan(plan, manifest, footage_index)
     report = apply_plan(plan, manifest, resolved, store, template_dir=template_dir, library=lib,
-                        footage_index=footage_index.to_json(), brief="beach")
+                        footage_index=footage_index.to_json(), brief="beach", force_write=True)
     assert report.ok and report.library_job_id
     rec = lib.find_by_job_dir(Path(report.job_dir))
     assert rec is not None and rec.written_doc and rec.brief == "beach"

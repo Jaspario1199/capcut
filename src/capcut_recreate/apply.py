@@ -60,8 +60,26 @@ def _us_to_s(us: int) -> str:
     return f"{us / US:.6f}s"
 
 
-def preflight(template_dir: Path, store: Path) -> dict[str, Any]:
+def capcut_running() -> bool:
+    """True when the CapCut desktop app has a live process (Windows or macOS)."""
+    import platform
+    import subprocess
+
+    try:
+        if platform.system() == "Windows":
+            out = subprocess.run(["tasklist", "/FI", "IMAGENAME eq CapCut.exe", "/NH"], capture_output=True, text=True, check=False)
+            return "CapCut.exe" in out.stdout
+        out = subprocess.run(["pgrep", "-x", "CapCut"], capture_output=True, text=True, check=False)
+        return out.returncode == 0
+    except OSError:
+        return False
+
+
+def preflight(template_dir: Path, store: Path, force_write: bool = False) -> dict[str, Any]:
     runner.check_version()
+    if capcut_running() and not force_write:
+        raise ApplyError("CapCut is running. Close it before applying; the app rewrites the project index "
+                         "and can overwrite or lose the new draft. (Scratch stores may pass force_write.)")
     doctor = runner.run_raw("doctor", drafts=str(store)).data or {}
     tools = doctor.get("tools") or doctor
     if isinstance(tools, dict) and tools.get("ffprobe") in (False, None) and "ffprobe" in json.dumps(doctor):
@@ -94,7 +112,7 @@ def preflight(template_dir: Path, store: Path) -> dict[str, Any]:
 def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], store: Path,
                template_dir: Path | None = None, sync_nested: bool = False,
                library: "Library | None" = None, footage_index: dict[str, Any] | None = None,
-               brief: str = "") -> ApplyReport:
+               brief: str = "", force_write: bool = False) -> ApplyReport:
     template_dir = Path(template_dir or manifest.template_dir)
     store = Path(store)
     job_dir = store / plan.job_name
@@ -146,7 +164,9 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
             stdin = "\n".join(json.dumps(o, ensure_ascii=False) for o in ops) + "\n"
             report.batch = runner.run("batch", str(doc_path), stdin=stdin)
 
-        report.register = runner.run("register", str(job_dir), apply=True, materials=True, drafts=str(store))
+        # capcut-cli refuses index writes while the app runs; only scratch stores pass force_write.
+        report.register = runner.run("register", str(job_dir), apply=True, materials=True, drafts=str(store),
+                                     force_write=force_write)
         fix = runner.run_raw("lint", str(doc_path), fix=True)
         report.lint_fix = fix.data
         if fix.status not in (0, 1, 2):

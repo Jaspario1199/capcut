@@ -123,9 +123,10 @@ def cmd_apply(a) -> int:
         return 1
     template = Path(a.template or manifest.template_dir)
     try:
-        pre = preflight(template, Path(a.store))
+        pre = preflight(template, Path(a.store), force_write=a.force_write)
         report = apply_plan(plan, manifest, resolved, Path(a.store), template_dir=template, sync_nested=a.sync_nested,
-                            library=None if a.no_library else _lib(a), footage_index=index.to_json(), brief=a.brief or "")
+                            library=None if a.no_library else _lib(a), footage_index=index.to_json(), brief=a.brief or "",
+                            force_write=a.force_write)
     except ApplyError as e:
         _dump({"ok": False, "stage": "apply", "error": str(e)}, None)
         return 2
@@ -213,6 +214,8 @@ def main(argv: list[str] | None = None) -> int:
     s = sub.add_parser("apply"); s.add_argument("manifest"); s.add_argument("footage"); s.add_argument("plan")
     s.add_argument("--store", required=True); s.add_argument("--template"); s.add_argument("--sync-nested", action="store_true")
     s.add_argument("--brief"); s.add_argument("--no-library", action="store_true"); lib_arg(s)
+    s.add_argument("--force-write", action="store_true",
+                   help="proceed while CapCut is running (only for scratch stores the app does not read)")
     s.set_defaults(fn=cmd_apply)
 
     s = sub.add_parser("learn"); s.add_argument("job_dir"); lib_arg(s); s.set_defaults(fn=cmd_learn)
