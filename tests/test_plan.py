@@ -77,3 +77,27 @@ def test_orientation_mismatch_is_a_warning(manifest, footage_index):
     assert errors == []
     assert any("orientation" in w for w in warnings)
     assert len(resolved) == 2
+
+
+def test_keep_slot_counts_as_filled(manifest, footage_index):
+    p = good_plan()
+    p.media[1] = type(p.media[1])(MEDIA_SLOT_PIP, keep=True)
+    errors, resolved = validate_plan(p, manifest, footage_index)
+    assert errors == []
+    assert [r.slot_id for r in resolved] == [MEDIA_SLOT_A]
+
+
+def test_plan_json_keep_roundtrip(manifest, footage_index):
+    p = Plan.from_json({"job_name": "j",
+                        "media": [{"slot_id": MEDIA_SLOT_A, "clip_id": "c00", "scene_id": "s0", "keep": False},
+                                  {"slot_id": MEDIA_SLOT_PIP, "clip_id": "", "scene_id": "", "keep": True}],
+                        "text": []})
+    errors, resolved = validate_plan(p, manifest, footage_index)
+    assert errors == [] and len(resolved) == 1
+
+
+def test_missing_clip_without_keep_is_an_error(manifest, footage_index):
+    p = good_plan()
+    p.media[1] = type(p.media[1])(MEDIA_SLOT_PIP)
+    errors, _ = validate_plan(p, manifest, footage_index)
+    assert any("keep: true" in e for e in errors)

@@ -30,6 +30,11 @@ replaceable media slots: plan in one pass. More: plan in chunks.
 3. Write `plan.json` matching `schema`: `job_name` exactly as given, one entry
    per replaceable media slot, `new_text` for replaceable text slots only.
    Never reference a locked slot. Keep text within each slot's `max_chars`.
+   For a slot whose template media is structural (a background plate that
+   spans the whole video, a white or black flash, a texture or gradient
+   layer), write `{"slot_id": "...", "clip_id": "", "scene_id": "", "keep": true}`
+   to leave it as the template had it. Only put footage where the template
+   showed footage.
 4. `capcut-recreate check manifest.json footage.json plan.json`; fix every
    error and re-check until `ok` is true. At most three rounds; then show the
    user the remaining errors and stop.

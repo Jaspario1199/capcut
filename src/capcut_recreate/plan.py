@@ -25,8 +25,11 @@ from .manifest import Manifest
 @dataclass
 class MediaChoice:
     slot_id: str
-    clip_id: str
-    scene_id: str
+    clip_id: str = ""
+    scene_id: str = ""
+    # keep=True leaves the template's own media in this slot (backgrounds,
+    # flash plates, overlays). Counts as filled; apply skips it.
+    keep: bool = False
 
 
 @dataclass
@@ -45,7 +48,8 @@ class Plan:
     def from_json(data: dict[str, Any]) -> "Plan":
         return Plan(
             job_name=str(data.get("job_name", "")),
-            media=[MediaChoice(**m) for m in data.get("media", [])],
+            media=[MediaChoice(**{k: v for k, v in m.items() if k in ("slot_id", "clip_id", "scene_id", "keep")})
+                   for m in data.get("media", [])],
             text=[TextChoice(**t) for t in data.get("text", [])],
         )
 
@@ -94,6 +98,11 @@ def validate_plan_full(plan: Plan, manifest: Manifest, index: FootageIndex) -> t
         seen.add(m.slot_id)
         if slot.status != "replaceable":
             errors.append(f"media slot {m.slot_id}: locked ({'; '.join(slot.lock_reasons)})")
+            continue
+        if m.keep:
+            continue  # filled by leaving the template media in place
+        if not m.clip_id or not m.scene_id:
+            errors.append(f"media slot {m.slot_id}: needs clip_id and scene_id, or keep: true")
             continue
         clip = clips.get(m.clip_id)
         if clip is None:
