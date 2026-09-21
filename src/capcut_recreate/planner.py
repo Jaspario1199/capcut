@@ -146,8 +146,54 @@ def build_messages(manifest: Manifest, index: FootageIndex, brief: str, examples
     return [{"role": "user", "content": content}]
 
 
+def chunk_manifest(manifest: Manifest, max_media: int = 12) -> list[Manifest]:
+    """Split a manifest into time-ordered windows of at most max_media replaceable media slots.
+
+    Every slot (media and text, replaceable and locked) lands in exactly one
+    chunk by its start time, so a planner sees what is on screen together.
+    Each chunk is a complete Manifest: validate_plan on it enforces that the
+    chunk's replaceable slots are all filled, and merge_plans stitches chunks.
+    """
+    media = sorted(manifest.media, key=lambda s: (s.target_start_us, s.track_index))
+    text = sorted(manifest.text, key=lambda s: (s.target_start_us, s.track_index))
+    repl = [s for s in media if s.status == "replaceable"]
+    if not repl:
+        return [manifest]
+    # window boundaries: start of every max_media-th replaceable media slot
+    starts = [repl[i].target_start_us for i in range(0, len(repl), max_media)]
+    bounds = starts[1:] + [None]
+    chunks: list[Manifest] = []
+    for lo, hi in zip(starts, bounds):
+        def inside(s):
+            return s.target_start_us >= lo and (hi is None or s.target_start_us < hi)
+        m = [s for s in media if inside(s)]
+        t = [s for s in text if inside(s)]
+        if lo == starts[0]:  # first window also takes anything that starts before it
+            m = [s for s in media if s.target_start_us < lo] + m
+            t = [s for s in text if s.target_start_us < lo] + t
+        chunks.append(Manifest(manifest.template_dir, manifest.fps, manifest.duration_us, manifest.canvas, m, t,
+                               manifest.locked_other))
+    return chunks
+
+
+def merge_plans(plans: list[Plan], job_name: str) -> Plan:
+    merged = Plan(job_name=job_name)
+    seen_m: set[str] = set()
+    seen_t: set[str] = set()
+    for p in plans:
+        for m in p.media:
+            if m.slot_id not in seen_m:
+                merged.media.append(m)
+                seen_m.add(m.slot_id)
+        for t in p.text:
+            if t.slot_id not in seen_t:
+                merged.text.append(t)
+                seen_t.add(t.slot_id)
+    return merged
+
+
 def export_prompt(manifest: Manifest, index: FootageIndex, brief: str, examples: list[JobRecord],
-                  job_name: str) -> dict[str, Any]:
+                  job_name: str, chunk_note: str = "") -> dict[str, Any]:
     """Everything a planner needs, as plain text plus image paths, for use without the API.
 
     A Claude Code session (or any LLM with file access) reads `prompt` and opens
@@ -155,6 +201,8 @@ def export_prompt(manifest: Manifest, index: FootageIndex, brief: str, examples:
     """
     messages = build_messages(manifest, index, brief, examples, include_images=False)
     text_parts = [f"job_name must be exactly: {job_name}"]
+    if chunk_note:
+        text_parts.append(chunk_note)
     text_parts += [b["text"] for b in messages[0]["content"] if b["type"] == "text"]
     images = []
     for s in manifest.media:

@@ -238,3 +238,28 @@ def test_capture_labels_split_and_trim(template_doc, tmp_path):
     assert ("aaaaaa01", "media_trim") in kinds
     assert ("eeeeeeee", "split") in kinds
     assert not any("eeeeeeee" in r for r in rewrites)
+
+
+def test_chunking_and_merge(manifest, footage_index):
+    from capcut_recreate.planner import chunk_manifest, merge_plans
+
+    chunks = chunk_manifest(manifest, max_media=1)
+    assert len(chunks) == 2  # two replaceable media slots at 0s and 7s
+    all_media = sorted(s.slot_id for c in chunks for s in c.media)
+    all_text = sorted(s.slot_id for c in chunks for s in c.text)
+    assert all_media == sorted(s.slot_id for s in manifest.media)
+    assert all_text == sorted(s.slot_id for s in manifest.text)
+    assert chunks[0].media_by_id()[MEDIA_SLOT_A] and chunks[1].media_by_id()[MEDIA_SLOT_PIP]
+    # locked mask slot at 5s rides with the first window (0s..7s)
+    from conftest import MEDIA_SLOT_MASK
+    assert MEDIA_SLOT_MASK in chunks[0].media_by_id()
+
+    p0 = Plan.from_json({"job_name": "j", "media": [{"slot_id": MEDIA_SLOT_A, "clip_id": "c00", "scene_id": "s0"}],
+                         "text": [{"slot_id": TEXT_SLOT_OK, "new_text": "Hi there"}]})
+    p1 = Plan.from_json({"job_name": "j", "media": [{"slot_id": MEDIA_SLOT_PIP, "clip_id": "c02", "scene_id": "s0"}],
+                         "text": []})
+    assert validate_plan(p0, chunks[0], footage_index)[0] == []
+    assert validate_plan(p1, chunks[1], footage_index)[0] == []
+    merged = merge_plans([p0, p1], "j")
+    assert validate_plan(merged, manifest, footage_index)[0] == []
+    assert len(merged.media) == 2 and len(merged.text) == 1
