@@ -36,8 +36,9 @@ PLAN_SCHEMA: dict[str, Any] = {
             "type": "array",
             "items": {
                 "type": "object",
-                "properties": {"slot_id": {"type": "string"}, "clip_id": {"type": "string"}, "scene_id": {"type": "string"}},
-                "required": ["slot_id", "clip_id", "scene_id"],
+                "properties": {"slot_id": {"type": "string"}, "clip_id": {"type": "string"}, "scene_id": {"type": "string"},
+                               "keep": {"type": "boolean"}},
+                "required": ["slot_id", "clip_id", "scene_id", "keep"],
                 "additionalProperties": False,
             },
         },
@@ -61,6 +62,7 @@ The template's timeline is fixed: every slot keeps its position, duration, speed
 
 Rules the validator enforces, so obey them or the plan is rejected:
 - Fill every replaceable media slot exactly once. Never reference a locked slot.
+- A media entry is either {"slot_id", "clip_id", "scene_id", "keep": false} or {"slot_id", "clip_id": "", "scene_id": "", "keep": true}. Use keep for slots whose template media is structural rather than content: full-length background plates, flash frames, solid-colour overlays, anything whose thumbnail is a plain colour or a texture. Keeping is always valid; forcing footage into a structural layer is not.
 - scene start + slot source duration + transition pad must fit inside the clip. Prefer scenes with room to spare.
 - Full-frame slots need a clip whose orientation matches the canvas.
 - Text must stay within max_chars for its slot.
