@@ -21,7 +21,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-from .draft import US, SegRef, iter_segments, load_doc, material_index, material_users, parse_text_content, utf16_len
+from .draft import (US, SegRef, iter_segments, load_doc, material_index, material_users, parse_text_content,
+                    resolve_media_path, utf16_len)
 
 MEDIA_TRACKS = {"video", "image"}
 TEXT_TRACKS = {"text"}
@@ -311,9 +312,7 @@ def _add_thumbnails(media: list[MediaSlot], template_dir: Path, thumbs_dir: Path
     if not ffmpeg_available():
         return
     for s in media:
-        src = Path(s.path)
-        if not src.is_absolute():
-            src = template_dir / src
+        src = resolve_media_path(s.path, template_dir)
         if not src.exists():
             continue
         points = [s.source_start_us]
