@@ -270,6 +270,9 @@ def _text_slot(ref: SegRef, mats: dict) -> TextSlot:
 
 
 def build_manifest(template_dir: Path, thumbs_dir: Path | None = None) -> Manifest:
+    template_dir = Path(template_dir).resolve()
+    if thumbs_dir is not None:
+        thumbs_dir = Path(thumbs_dir).resolve()
     doc = load_doc(template_dir)
     mats = material_index(doc)
     users = material_users(doc)

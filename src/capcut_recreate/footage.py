@@ -122,6 +122,7 @@ def stage_footage(sources: list[Path], staging_dir: Path, ffprobe_cmd: str = "ff
     """Copy clips into staging_dir under unique names and index them."""
     from .thumbs import ThumbError, extract_frame, ffmpeg_available, thumb_name
 
+    staging_dir = Path(staging_dir).resolve()  # absolute, so the index works from any cwd
     staging_dir.mkdir(parents=True, exist_ok=True)
     thumbs_dir = staging_dir / "thumbs"
     clips: list[Clip] = []

@@ -123,10 +123,11 @@ def cmd_apply(a) -> int:
         return 1
     template = Path(a.template or manifest.template_dir)
     try:
-        pre = preflight(template, Path(a.store), force_write=a.force_write)
+        pre = preflight(template, Path(a.store), force_write=a.force_write,
+                        allow_untested_version=a.allow_untested_version)
         report = apply_plan(plan, manifest, resolved, Path(a.store), template_dir=template, sync_nested=a.sync_nested,
                             library=None if a.no_library else _lib(a), footage_index=index.to_json(), brief=a.brief or "",
-                            force_write=a.force_write)
+                            force_write=a.force_write, allow_untested_version=a.allow_untested_version)
     except ApplyError as e:
         _dump({"ok": False, "stage": "apply", "error": str(e)}, None)
         return 2
@@ -134,7 +135,7 @@ def cmd_apply(a) -> int:
            "replaced": len(report.replaced), "batch": report.batch, "invariant_errors": report.invariant_errors,
            "diff_violations": report.diff_violations,
            "lint_summary": (report.lint_info or {}).get("summary") if isinstance(report.lint_info, dict) else None,
-           "preflight": {k: bool(v) for k, v in pre.items()}}, None)
+           "template_support": pre.get("support")}, None)
     return 0 if report.ok else 2
 
 
@@ -216,6 +217,9 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--brief"); s.add_argument("--no-library", action="store_true"); lib_arg(s)
     s.add_argument("--force-write", action="store_true",
                    help="proceed while CapCut is running (only for scratch stores the app does not read)")
+    s.add_argument("--allow-untested-version", action="store_true",
+                   help="write drafts whose version stamp capcut-cli has no round-trip evidence for "
+                        "(mobile-made projects); back up the drafts folder first and verify in the app")
     s.set_defaults(fn=cmd_apply)
 
     s = sub.add_parser("learn"); s.add_argument("job_dir"); lib_arg(s); s.set_defaults(fn=cmd_learn)

@@ -50,6 +50,10 @@ def cli_argv() -> list[str]:
 
 def run_raw(*args: str, stdin: str | None = None, **flags: Any) -> Result:
     cmd = cli_argv() + list(args)
+    # --force-write is a global capcut-cli flag: it overrides the editor-running,
+    # changed-on-disk, and version-boundary guards together.
+    if flags.pop("force_write", False):
+        cmd.append("--force-write")
     for k, v in flags.items():
         flag = "--" + k.replace("_", "-")
         if v is None or v is False:
