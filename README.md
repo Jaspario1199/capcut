@@ -56,22 +56,38 @@ capcut-recreate learn <drafts-dir>/beach-v1
 capcut-recreate feedback <job-id> --rating up --note "hook clip was perfect"
 ```
 
-## Letting Claude plan, and letting it learn
+## Letting an LLM plan, and letting it learn
+
+### No API key: Claude Code (or any LLM) as the planner
+
+Open this repo in Claude Code and run `/capcut-plan manifest.json footage.json --job beach-v2 --brief "..."`.
+The skill in `.claude/skills/capcut-plan/` does the loop below. It uses the
+subscription you already have and nothing else.
 
 ```bash
-pip install -e ".[llm]"          # anthropic SDK; needs ANTHROPIC_API_KEY or `ant auth login`
 capcut-recreate manifest <template> -o manifest.json --thumbs ./thumbs   # thumbnails for the planner
 capcut-recreate index ./staging clipA.mp4 clipB.mov -o footage.json      # scene thumbnails too
-capcut-recreate plan manifest.json footage.json --job beach-v2 \
-    --brief "Same energy as the original, but about the Galveston trip" -o plan.json
+capcut-recreate prompt manifest.json footage.json --job beach-v2 --brief "..." -o prompt.json
+# an LLM with file access reads prompt.json, opens the listed thumbnails, writes plan.json
+capcut-recreate check manifest.json footage.json plan.json               # repeat until ok
 capcut-recreate apply manifest.json footage.json plan.json --store <drafts-dir> --brief "..."
 ```
 
-`plan` sends Claude the slot manifest (with template thumbnails), the footage
-index (with scene thumbnails), your brief, and up to three worked examples from
-the library, then runs our validator on the answer and sends the error list
-back for another attempt, at most three times. The model never sees or writes
-draft JSON.
+`prompt.json` holds the system instructions, the brief, worked examples with
+corrections, the slot manifest, the footage index, the JSON schema the plan
+must match, and the path of every thumbnail. Any model that can read files
+can plan from it.
+
+### With an API key: `plan`
+
+```bash
+pip install -e ".[llm]"          # anthropic SDK; needs ANTHROPIC_API_KEY or `ant auth login`
+capcut-recreate plan manifest.json footage.json --job beach-v2 --brief "..." -o plan.json
+```
+
+`plan` sends Claude the same material with thumbnails inline, runs our
+validator on the answer, and sends the error list back for another attempt, at
+most three times. Either way the model never sees or writes draft JSON.
 
 **Learning** is a retrieval loop, not model training. Every `apply` stores the
 job in the library (`~/.capcut-recreate/library`). After you open the result in
@@ -125,7 +141,8 @@ text.
 - [x] Phase 4 apply with own validator and diff
 - [x] Thumbnails in the manifest and footage index
 - [x] Example library, corrections capture, feedback
-- [x] Claude planner with validator feedback loop (tested with a fake client; live calls need credentials)
+- [x] Planner without an API key: `prompt` export plus the `/capcut-plan` Claude Code skill (exercised end to end)
+- [x] API planner with validator feedback loop (tested with a fake client; live calls need credentials)
 - [ ] Phase 0 validation against a real CapCut build (needs the app; see WORKFLOW.md). `learn` on a Phase 0 job produces the app-rewrite allowlist.
 - [ ] Transcript spans in the manifest
 - [ ] Multi-style text replacement with range rescaling

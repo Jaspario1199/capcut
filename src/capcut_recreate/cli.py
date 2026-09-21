@@ -2,7 +2,8 @@
 
   capcut-recreate manifest  <template-dir> [-o manifest.json] [--thumbs DIR]
   capcut-recreate index     <staging-dir> <clip>... [-o footage.json]
-  capcut-recreate plan      <manifest.json> <footage.json> --job NAME --brief TEXT [-o plan.json]
+  capcut-recreate prompt    <manifest.json> <footage.json> --job NAME --brief TEXT [-o prompt.json]   (no API: for Claude Code / any LLM)
+  capcut-recreate plan      <manifest.json> <footage.json> --job NAME --brief TEXT [-o plan.json]     (Anthropic API)
   capcut-recreate check     <manifest.json> <footage.json> <plan.json>
   capcut-recreate apply     <manifest.json> <footage.json> <plan.json> --store <drafts-dir> [--brief TEXT]
   capcut-recreate learn     <job-dir>            capture operator corrections after editing in CapCut
@@ -91,6 +92,19 @@ def cmd_plan(a) -> int:
     out = {"job_name": plan.job_name, "media": [m.__dict__ for m in plan.media], "text": [t.__dict__ for t in plan.text]}
     _dump(out, a.out)
     print(json.dumps({"attempts": len(attempts), "examples_used": len(examples)}), file=sys.stderr)
+    return 0
+
+
+def cmd_prompt(a) -> int:
+    """Write the planner input for an LLM that is not called through the API."""
+    from .planner import export_prompt
+
+    manifest, index = _load_two(a)
+    lib = _lib(a)
+    examples = lib.find_examples(load_doc(Path(manifest.template_dir)), k=a.examples) if a.examples else []
+    out = export_prompt(manifest, index, a.brief, examples, a.job)
+    _dump(out, a.out)
+    print(json.dumps({"images": len(out["images"]), "examples_used": len(examples)}), file=sys.stderr)
     return 0
 
 
@@ -189,6 +203,10 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--effort", default="high", choices=["low", "medium", "high", "xhigh", "max"])
     s.add_argument("--no-fallbacks", action="store_true"); s.add_argument("--no-images", action="store_true"); lib_arg(s)
     s.set_defaults(fn=cmd_plan)
+
+    s = sub.add_parser("prompt"); s.add_argument("manifest"); s.add_argument("footage"); s.add_argument("--job", required=True)
+    s.add_argument("--brief", required=True); s.add_argument("-o", "--out"); s.add_argument("--examples", type=int, default=3); lib_arg(s)
+    s.set_defaults(fn=cmd_prompt)
 
     s = sub.add_parser("check"); s.add_argument("manifest"); s.add_argument("footage"); s.add_argument("plan"); s.set_defaults(fn=cmd_check)
 

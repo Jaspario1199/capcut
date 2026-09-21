@@ -206,3 +206,16 @@ def test_apply_records_to_library(manifest, footage_index, store, template_dir, 
     assert rec is not None and rec.written_doc and rec.brief == "beach"
     corrections, rewrites = capture(Path(report.job_dir), rec)
     assert corrections == [] and rewrites == []
+
+
+def test_export_prompt_lists_images_and_slots(manifest, footage_index, template_doc):
+    from capcut_recreate.planner import export_prompt
+
+    rec = _record("prev", template_doc, [Correction(TEXT_SLOT_OK, "text", "a", "b")])
+    out = export_prompt(manifest, footage_index, "brief here", [rec], job_name="jobx")
+    assert out["job_name"] == "jobx" and out["schema"] == PLAN_SCHEMA
+    assert out["prompt"].startswith("job_name must be exactly: jobx")
+    assert "brief here" in out["prompt"] and MEDIA_SLOT_A in out["prompt"] and "WORKED EXAMPLES" in out["prompt"]
+    assert all(set(i) == {"for", "path"} for i in out["images"])
+    assert len(out["images"]) == sum(len(s.thumbnails) for s in manifest.media) + sum(
+        1 for c in footage_index.clips for s in c.scenes if s.thumbnail)

@@ -146,6 +146,28 @@ def build_messages(manifest: Manifest, index: FootageIndex, brief: str, examples
     return [{"role": "user", "content": content}]
 
 
+def export_prompt(manifest: Manifest, index: FootageIndex, brief: str, examples: list[JobRecord],
+                  job_name: str) -> dict[str, Any]:
+    """Everything a planner needs, as plain text plus image paths, for use without the API.
+
+    A Claude Code session (or any LLM with file access) reads `prompt` and opens
+    the listed thumbnails, then writes a plan.json matching `schema`.
+    """
+    messages = build_messages(manifest, index, brief, examples, include_images=False)
+    text_parts = [f"job_name must be exactly: {job_name}"]
+    text_parts += [b["text"] for b in messages[0]["content"] if b["type"] == "text"]
+    images = []
+    for s in manifest.media:
+        for t in s.thumbnails:
+            images.append({"for": f"template slot {s.slot_id}", "path": t})
+    for c in index.clips:
+        for sc in c.scenes:
+            if sc.thumbnail:
+                images.append({"for": f"clip {c.clip_id} scene {sc.scene_id}", "path": sc.thumbnail})
+    return {"system": SYSTEM, "prompt": "\n\n".join(text_parts), "images": images, "schema": PLAN_SCHEMA,
+            "job_name": job_name}
+
+
 def _extract_text(response: Any) -> str:
     for block in response.content:
         if getattr(block, "type", None) == "text":
