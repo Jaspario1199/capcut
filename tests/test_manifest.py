@@ -62,3 +62,17 @@ def test_shared_material_locks(template_doc, tmp_path):
 def test_roundtrip_json(manifest: Manifest):
     again = manifest_from_json(manifest.to_json())
     assert again.to_json() == manifest.to_json()
+
+
+def test_paths_are_absolute(tmp_path, monkeypatch):
+    from pathlib import Path
+
+    from capcut_recreate.footage import stage_footage
+    from capcut_recreate.manifest import build_manifest
+    from conftest import FOOTAGE, TEMPLATE
+
+    monkeypatch.chdir(tmp_path)
+    m = build_manifest(Path("../" * 0 + str(TEMPLATE)))
+    assert Path(m.template_dir).is_absolute()
+    idx = stage_footage(sorted(FOOTAGE.glob("*.mp4"))[:1], Path("rel_staging"), thumbnails=False)
+    assert all(Path(c.path).is_absolute() for c in idx.clips)
