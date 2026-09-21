@@ -124,3 +124,22 @@ def test_zero_in_point_serialises_as_string():
     from capcut_recreate.apply import _us_to_s
 
     assert _us_to_s(0) == "0.000000s"
+
+
+def test_preflight_refuses_untested_version(template_dir, store, monkeypatch):
+    from capcut_recreate import apply as apply_mod
+    from capcut_recreate.runner import Result
+
+    real = apply_mod.runner.run_raw
+
+    def fake(*args, **kw):
+        if args and args[0] == "version":
+            return Result(True, 0, {"app_version": "14.8.0", "support": {"write_guard": "refuse", "status": "untested"}}, "", "")
+        return real(*args, **kw)
+
+    monkeypatch.setattr(apply_mod.runner, "run_raw", fake)
+    monkeypatch.setattr(apply_mod, "capcut_running", lambda: False)
+    with pytest.raises(ApplyError, match="14.8.0"):
+        apply_mod.preflight(template_dir, store)
+    pre = apply_mod.preflight(template_dir, store, allow_untested_version=True)
+    assert pre["support"]["write_guard"] == "refuse"
