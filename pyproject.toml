@@ -13,6 +13,7 @@ dependencies = []
 
 [project.optional-dependencies]
 scenes = ["scenedetect[opencv]>=0.6"]
+llm = ["anthropic>=1.7"]
 dev = ["pytest>=8"]
 
 [project.scripts]

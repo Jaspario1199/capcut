@@ -79,6 +79,8 @@ class MediaSlot:
     group_id: str = ""
     has_combination: bool = False
     shared_with: list[str] = field(default_factory=list)
+    # JPEG paths at the slot's in-point and mid-point, when a thumbs dir was given.
+    thumbnails: list[str] = field(default_factory=list)
     status: str = "replaceable"
     lock_reasons: list[str] = field(default_factory=list)
 
@@ -267,7 +269,7 @@ def _text_slot(ref: SegRef, mats: dict) -> TextSlot:
     return slot
 
 
-def build_manifest(template_dir: Path) -> Manifest:
+def build_manifest(template_dir: Path, thumbs_dir: Path | None = None) -> Manifest:
     doc = load_doc(template_dir)
     mats = material_index(doc)
     users = material_users(doc)
@@ -291,10 +293,37 @@ def build_manifest(template_dir: Path) -> Manifest:
             if p and n and p.transition_out:
                 n.transition_in = p.transition_out
 
+    if thumbs_dir is not None:
+        _add_thumbnails(media, Path(template_dir), Path(thumbs_dir))
+
     return Manifest(
         template_dir=str(template_dir), fps=float(doc.get("fps") or 30), duration_us=int(doc.get("duration") or 0),
         canvas=doc.get("canvas_config") or {}, media=media, text=text, locked_other=other,
     )
+
+
+def _add_thumbnails(media: list[MediaSlot], template_dir: Path, thumbs_dir: Path) -> None:
+    from .thumbs import ThumbError, extract_frame, ffmpeg_available, thumb_name
+
+    if not ffmpeg_available():
+        return
+    for s in media:
+        src = Path(s.path)
+        if not src.is_absolute():
+            src = template_dir / src
+        if not src.exists():
+            continue
+        points = [s.source_start_us]
+        if s.material_type != "photo" and s.source_duration_us > 0:
+            points.append(s.source_start_us + s.source_duration_us // 2)
+        for at in points:
+            out = thumbs_dir / thumb_name(f"slot_{s.slot_id[:8]}", at)
+            try:
+                if not out.exists():
+                    extract_frame(src, at, out)
+                s.thumbnails.append(str(out))
+            except ThumbError:
+                continue
 
 
 def manifest_from_json(data: dict[str, Any]) -> Manifest:

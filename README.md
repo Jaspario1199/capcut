@@ -50,7 +50,41 @@ capcut-recreate check manifest.json footage.json plan.json
 capcut-recreate apply manifest.json footage.json plan.json --store ~/Movies/CapCut/User\ Data/Projects/com.lveditor.draft
 
 # 5. Open CapCut, review, export. There is no headless export.
+
+# 6. After you fix things by hand in CapCut and save, capture what you changed.
+capcut-recreate learn <drafts-dir>/beach-v1
+capcut-recreate feedback <job-id> --rating up --note "hook clip was perfect"
 ```
+
+## Letting Claude plan, and letting it learn
+
+```bash
+pip install -e ".[llm]"          # anthropic SDK; needs ANTHROPIC_API_KEY or `ant auth login`
+capcut-recreate manifest <template> -o manifest.json --thumbs ./thumbs   # thumbnails for the planner
+capcut-recreate index ./staging clipA.mp4 clipB.mov -o footage.json      # scene thumbnails too
+capcut-recreate plan manifest.json footage.json --job beach-v2 \
+    --brief "Same energy as the original, but about the Galveston trip" -o plan.json
+capcut-recreate apply manifest.json footage.json plan.json --store <drafts-dir> --brief "..."
+```
+
+`plan` sends Claude the slot manifest (with template thumbnails), the footage
+index (with scene thumbnails), your brief, and up to three worked examples from
+the library, then runs our validator on the answer and sends the error list
+back for another attempt, at most three times. The model never sees or writes
+draft JSON.
+
+**Learning** is a retrieval loop, not model training. Every `apply` stores the
+job in the library (`~/.capcut-recreate/library`). After you open the result in
+CapCut, fix it by hand, and save, `learn` diffs the saved draft against what we
+wrote and records labelled corrections: which slot got a different clip, which
+in-point you nudged, which text you rewrote. `feedback` records a rating. The
+next `plan` for the same template (or the closest one) shows those examples and
+corrections to the model as the operator's taste. Fields CapCut itself rewrote
+on open are stored separately as app-rewrite paths, which is the Phase 0
+allowlist described in `docs/WORKFLOW.md`.
+
+Planner defaults: `claude-opus-5`, adaptive thinking, effort `high`, structured
+JSON output, and server-side refusal fallbacks (`--no-fallbacks` to disable).
 
 Close CapCut before `apply`. Validate one exact CapCut build with
 `docs/WORKFLOW.md` Phase 0 before trusting any of this on a real template.
@@ -89,9 +123,11 @@ text.
 - [x] Phase 2 footage index (ffprobe, optional PySceneDetect; no transcripts yet)
 - [x] Phase 3 plan schema and validator
 - [x] Phase 4 apply with own validator and diff
-- [ ] Phase 0 validation against a real CapCut build (needs the app; see WORKFLOW.md)
-- [ ] Thumbnails and transcript spans in the manifest
-- [ ] LLM planner
+- [x] Thumbnails in the manifest and footage index
+- [x] Example library, corrections capture, feedback
+- [x] Claude planner with validator feedback loop (tested with a fake client; live calls need credentials)
+- [ ] Phase 0 validation against a real CapCut build (needs the app; see WORKFLOW.md). `learn` on a Phase 0 job produces the app-rewrite allowlist.
+- [ ] Transcript spans in the manifest
 - [ ] Multi-style text replacement with range rescaling
 
 Not affiliated with ByteDance or CapCut.

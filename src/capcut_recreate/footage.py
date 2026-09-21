@@ -29,6 +29,7 @@ class Scene:
     scene_id: str
     start_us: int
     end_us: int
+    thumbnail: str | None = None
 
 
 @dataclass
@@ -117,9 +118,12 @@ def detect_scenes(path: Path, duration_us: int, threshold: float = 27.0) -> list
 
 
 def stage_footage(sources: list[Path], staging_dir: Path, ffprobe_cmd: str = "ffprobe",
-                  scene_threshold: float = 27.0) -> FootageIndex:
+                  scene_threshold: float = 27.0, thumbnails: bool = True) -> FootageIndex:
     """Copy clips into staging_dir under unique names and index them."""
+    from .thumbs import ThumbError, extract_frame, ffmpeg_available, thumb_name
+
     staging_dir.mkdir(parents=True, exist_ok=True)
+    thumbs_dir = staging_dir / "thumbs"
     clips: list[Clip] = []
     seen: set[str] = set()
     for src in sources:
@@ -143,6 +147,15 @@ def stage_footage(sources: list[Path], staging_dir: Path, ffprobe_cmd: str = "ff
             raise FootageError(f"{src}: variable frame rate; transcode to CFR first")
         clip.original_name = src.name
         clip.scenes = detect_scenes(dest, clip.duration_us, scene_threshold)
+        if thumbnails and ffmpeg_available():
+            for sc in clip.scenes:
+                out = thumbs_dir / thumb_name(f"{clip_id}_{sc.scene_id}", sc.start_us)
+                try:
+                    if not out.exists():
+                        extract_frame(dest, sc.start_us, out)
+                    sc.thumbnail = str(out)
+                except ThumbError:
+                    sc.thumbnail = None
         clips.append(clip)
     return FootageIndex(clips)
 

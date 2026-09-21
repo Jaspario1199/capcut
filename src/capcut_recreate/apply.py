@@ -29,6 +29,7 @@ from . import runner
 from .diffing import apply_allowlist, diff
 from .draft import US, find_doc, iter_segments, load_doc
 from .footage import md5_file
+from .library import Library
 from .manifest import Manifest
 from .plan import Plan, ResolvedMedia
 
@@ -50,6 +51,7 @@ class ApplyReport:
     invariant_errors: list[str] = field(default_factory=list)
     diff_violations: list[str] = field(default_factory=list)
     lint_info: dict[str, Any] | None = None
+    library_job_id: str | None = None
     ok: bool = False
 
 
@@ -90,7 +92,9 @@ def preflight(template_dir: Path, store: Path) -> dict[str, Any]:
 
 
 def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], store: Path,
-               template_dir: Path | None = None, sync_nested: bool = False) -> ApplyReport:
+               template_dir: Path | None = None, sync_nested: bool = False,
+               library: "Library | None" = None, footage_index: dict[str, Any] | None = None,
+               brief: str = "") -> ApplyReport:
     template_dir = Path(template_dir or manifest.template_dir)
     store = Path(store)
     job_dir = store / plan.job_name
@@ -166,6 +170,14 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
         report.ok = not report.invariant_errors and not report.diff_violations
         if not report.ok:
             raise ApplyError("validation failed: " + "; ".join(report.invariant_errors + report.diff_violations))
+        if library is not None:
+            rec = library.record_apply(
+                job_id=report.draft_id or plan.job_name, template_doc=template_doc, template_dir=str(template_dir),
+                job_dir=str(job_dir), manifest=manifest.to_json(), footage_index=footage_index or {},
+                plan={"job_name": plan.job_name, "media": [m.__dict__ for m in plan.media], "text": [t.__dict__ for t in plan.text]},
+                written_doc=new_doc, brief=brief,
+            )
+            report.library_job_id = rec.job_id
         return report
     except Exception:
         shutil.rmtree(job_dir, ignore_errors=True)
