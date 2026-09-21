@@ -25,7 +25,7 @@ from .diffing import diff
 from .draft import frame_us, iter_segments, load_doc, material_index, parse_text_content
 from .library import Correction, JobRecord
 
-_SEG = re.compile(r"^tracks\[([^\]]+)\]\.segments\[([^\]]+)\]\.(.+)$")
+_SEG = re.compile(r"^tracks\[([^\]]+)\]\.segments\[([^\]]+)\](?:\.(.+))?$")
 _MAT = re.compile(r"^materials\.(videos|audios|texts)\[([^\]]+)\]\.(.+)$")
 
 
@@ -54,6 +54,7 @@ def capture(job_dir: Path, rec: JobRecord) -> tuple[list[Correction], list[str]]
         m = _SEG.match(ch.path)
         if m:
             track_id, seg_id, rest = m.groups()
+            rest = rest or ""
             if seg_id not in known_segments and ch.kind == "added" and track_id in planned_tracks:
                 new_seg = ch.after if isinstance(ch.after, dict) else {}
                 corrections.append(Correction(seg_id, "split", None, new_seg.get("material_id"),
