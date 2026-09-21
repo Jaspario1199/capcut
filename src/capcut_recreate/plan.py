@@ -61,7 +61,19 @@ class ResolvedMedia:
 
 def validate_plan(plan: Plan, manifest: Manifest, index: FootageIndex) -> tuple[list[str], list[ResolvedMedia]]:
     """Return (errors, resolved media). Empty errors means the plan is applicable."""
+    errors, _warnings, resolved = validate_plan_full(plan, manifest, index)
+    return errors, resolved
+
+
+def validate_plan_full(plan: Plan, manifest: Manifest, index: FootageIndex) -> tuple[list[str], list[str], list[ResolvedMedia]]:
+    """Return (errors, warnings, resolved media).
+
+    Warnings do not block apply. Orientation mismatch is a warning: CapCut fits
+    the clip to the canvas, so a landscape clip in a portrait full-frame slot
+    plays letterboxed rather than failing.
+    """
     errors: list[str] = []
+    warnings: list[str] = []
     resolved: list[ResolvedMedia] = []
     media_slots = manifest.media_by_id()
     text_slots = manifest.text_by_id()
@@ -103,9 +115,9 @@ def validate_plan(plan: Plan, manifest: Manifest, index: FootageIndex) -> tuple[
                 canvas_portrait = ch > cw
                 clip_portrait = clip.height > clip.width
                 if canvas_portrait != clip_portrait:
-                    errors.append(f"media slot {m.slot_id}: full-frame slot but clip {m.clip_id} orientation "
-                                  f"({clip.width}x{clip.height}) does not match canvas ({cw}x{ch})")
-                    continue
+                    warnings.append(f"media slot {m.slot_id}: full-frame slot but clip {m.clip_id} orientation "
+                                    f"({clip.width}x{clip.height}) does not match canvas ({cw}x{ch}); "
+                                    "CapCut will letterbox or pillarbox it")
         resolved.append(ResolvedMedia(m.slot_id, clip.path, clip.md5, scene.start_us, slot.source_duration_us))
 
     missing = [s.slot_id for s in manifest.media if s.status == "replaceable" and s.slot_id not in seen]
@@ -132,4 +144,4 @@ def validate_plan(plan: Plan, manifest: Manifest, index: FootageIndex) -> tuple[
         if n > slot.max_chars:
             errors.append(f"text slot {t.slot_id}: {n} chars exceeds heuristic max {slot.max_chars}")
 
-    return errors, resolved
+    return errors, warnings, resolved
