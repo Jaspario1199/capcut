@@ -80,6 +80,11 @@ also works.
 - Locked slots are never filled. The manifest says why each one is locked.
 - Run `python -m pytest -q` before pushing code changes. Tests need
   `capcut-cli` and `ffprobe` on PATH for the end-to-end cases.
+- Keep GitHub in sync while working: commit job inputs and plans under
+  `work/<job>/` on a `work/<job>` branch and push after each milestone
+  (index built, plan checked, apply done, learn captured). Open a pull request
+  with `gh pr create` when the job is done. Never force-push; never push
+  footage files, thumbnails are fine.
 - Nothing here calls a paid API by default. `capcut-recreate plan` is the only
   command that does, and the operator has chosen not to use it.
 

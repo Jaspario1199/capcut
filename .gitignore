@@ -6,3 +6,6 @@ dist/
 .venv/
 staging/
 *.bak
+# footage never goes to GitHub; plans, manifests, indexes and thumbnails do
+work/**/*.mp4
+work/**/*.mov
