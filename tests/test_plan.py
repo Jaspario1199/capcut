@@ -67,3 +67,13 @@ def test_bad_job_name(manifest, footage_index, bad):
     p.job_name = bad
     errors, _ = validate_plan(p, manifest, footage_index)
     assert any("job_name" in e for e in errors)
+
+
+def test_orientation_mismatch_is_a_warning(manifest, footage_index):
+    from capcut_recreate.plan import validate_plan_full
+
+    manifest.canvas = {"width": 1080, "height": 1920}  # portrait canvas, fixture clips are landscape
+    errors, warnings, resolved = validate_plan_full(good_plan(), manifest, footage_index)
+    assert errors == []
+    assert any("orientation" in w for w in warnings)
+    assert len(resolved) == 2

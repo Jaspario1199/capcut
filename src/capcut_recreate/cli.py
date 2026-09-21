@@ -31,7 +31,7 @@ from .draft import load_doc
 from .footage import index_from_json, stage_footage
 from .library import Library
 from .manifest import build_manifest, manifest_from_json
-from .plan import Plan, validate_plan
+from .plan import Plan, validate_plan, validate_plan_full
 from .validate import validate_dir
 
 
@@ -145,8 +145,8 @@ def cmd_merge_plans(a) -> int:
 
 def cmd_check(a) -> int:
     manifest, index, plan = _load_three(a)
-    errors, resolved = validate_plan(plan, manifest, index)
-    _dump({"ok": not errors, "errors": errors, "resolved": [r.__dict__ for r in resolved]}, None)
+    errors, warnings, resolved = validate_plan_full(plan, manifest, index)
+    _dump({"ok": not errors, "errors": errors, "warnings": warnings, "resolved": [r.__dict__ for r in resolved]}, None)
     return 0 if not errors else 1
 
 
