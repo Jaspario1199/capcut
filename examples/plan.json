@@ -1,0 +1,10 @@
+{
+  "job_name": "beach-v1",
+  "media": [
+    {"slot_id": "aaaaaa01-0000-0000-0000-000000000001", "clip_id": "c00", "scene_id": "s0"},
+    {"slot_id": "dddddd01-0000-0000-0000-000000000001", "clip_id": "c02", "scene_id": "s0"}
+  ],
+  "text": [
+    {"slot_id": "cccccc01-0000-0000-0000-000000000001", "new_text": "Welcome back"}
+  ]
+}
