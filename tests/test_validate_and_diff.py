@@ -1,3 +1,4 @@
+import pytest
 import copy
 
 from conftest import MEDIA_SLOT_A
@@ -79,3 +80,25 @@ def test_diff_allowlist(template_doc):
     res = diff(template_doc, d)
     left = res.filtered([r"^id$"])
     assert len(left) == 1 and left[0].path.endswith("clip.scale.x")
+
+
+def test_placeholder_media_paths(tmp_path):
+    from pathlib import Path
+
+    from capcut_recreate.apply import ApplyError, _check_relink
+    from capcut_recreate.draft import is_placeholder_path, resolve_media_path
+
+    token = "##_draftpath_placeholder_0E685133-18CE-45ED-8CB8-2904A212EC80_##"
+    assert is_placeholder_path(token + "/video/a.mov")
+    assert is_placeholder_path(token + "\\video\\a.mov")
+    assert not is_placeholder_path("/abs/a.mov") and not is_placeholder_path("assets/video/a.mov")
+    assert resolve_media_path(token + "/video/a.mov", tmp_path) == tmp_path / "video" / "a.mov"
+    assert resolve_media_path("assets/video/a.mov", tmp_path) == tmp_path / "assets" / "video" / "a.mov"
+
+    (tmp_path / "video").mkdir()
+    (tmp_path / "video" / "a.mov").write_bytes(b"x")
+    doc = {"materials": {"videos": [{"id": "m1", "path": token + "/video/a.mov"}], "audios": []}}
+    _check_relink(doc, doc, tmp_path)  # placeholder resolving inside the job is fine
+    missing = {"materials": {"videos": [{"id": "m1", "path": token + "/video/b.mov"}], "audios": []}}
+    with pytest.raises(ApplyError, match="does not resolve"):
+        _check_relink(missing, missing, tmp_path)

@@ -27,7 +27,7 @@ from typing import Any
 
 from . import runner
 from .diffing import apply_allowlist, diff
-from .draft import US, find_doc, iter_segments, load_doc
+from .draft import US, find_doc, is_placeholder_path, iter_segments, load_doc, resolve_media_path
 from .footage import md5_file
 from .library import Library
 from .manifest import Manifest
@@ -223,7 +223,10 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
 
 
 def _check_relink(template_doc: dict[str, Any], new_doc: dict[str, Any], job_dir: Path) -> None:
-    """Every media material must keep its basename and resolve to a real file."""
+    """Every media material must keep its basename and resolve to a real file inside the job.
+
+    Accepts CapCut's draft-folder placeholder token (9.x) as well as absolute paths.
+    """
     old = {m["id"]: m for cat in ("videos", "audios") for m in template_doc["materials"].get(cat, [])}
     for cat in ("videos", "audios"):
         for m in new_doc["materials"].get(cat, []):
@@ -231,10 +234,13 @@ def _check_relink(template_doc: dict[str, Any], new_doc: dict[str, Any], job_dir
             if not isinstance(path, str) or not path or path.startswith("http"):
                 continue
             before = old.get(m["id"], {}).get("path", "")
-            if Path(path).name != Path(before).name:
+            if Path(path.replace("\\", "/")).name != Path(before.replace("\\", "/")).name:
                 raise ApplyError(f"relink changed basename of {m['id']}: {before} -> {path}")
-            if not Path(path).is_absolute() or not Path(path).exists():
-                raise ApplyError(f"{m['id']}: path {path} is not an existing absolute file after relink")
+            resolved = resolve_media_path(path, job_dir)
+            if not resolved.exists():
+                raise ApplyError(f"{m['id']}: media {path} does not resolve to a file in the job ({resolved})")
+            if not is_placeholder_path(path) and not Path(path).is_absolute():
+                raise ApplyError(f"{m['id']}: path {path} is neither absolute nor a draft placeholder after relink")
 
 
 def _drop_root_entry(store: Path, job_dir: str) -> None:

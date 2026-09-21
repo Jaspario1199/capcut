@@ -143,7 +143,7 @@ text.
 - [x] Example library, corrections capture, feedback
 - [x] Planner without an API key: `prompt` export plus the `/capcut-plan` Claude Code skill (exercised end to end)
 - [x] API planner with validator feedback loop (tested with a fake client; live calls need credentials)
-- [ ] Phase 0 validation against a real CapCut build (needs the app; see WORKFLOW.md). `learn` on a Phase 0 job produces the app-rewrite allowlist.
+- [x] Phase 0 verified on CapCut 9.5.0 Windows with a mobile-made template (WORKFLOW.md section 5a). The app rewrote none of the fields the pipeline wrote.
 - [ ] Transcript spans in the manifest
 - [ ] Multi-style text replacement with range rescaling
 

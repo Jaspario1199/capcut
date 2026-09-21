@@ -1,6 +1,6 @@
 # LLM-driven recreation of complex CapCut projects
 
-**Status:** v3, after two rounds of adversarial review with every tool claim tested against capcut-cli 0.25.0 on a scratch drafts store.
+**Status:** v3, after two rounds of adversarial review with every tool claim tested against capcut-cli 0.25.0 on a scratch drafts store. **Phase 0 verified on 2026-09-21** (see section 5a).
 **Date:** 2026-09-21
 
 ## 1. What this is
@@ -52,6 +52,32 @@ A pipeline where an LLM takes an existing, hand-made CapCut (international, desk
 3. Open the result in the app, make a trivial edit, save, quit.
 4. Deep-diff the saved draft against what was written using the custom path-level diff. Record every path the app rewrites (frame-grid rounding, bookkeeping fields). This becomes the app-rewrite allowlist.
 5. If the app rejects the draft, or rewrites timing by more than one frame, or drops keyframes, masks, or text, the build is unsupported. Stop.
+
+## 5a. Phase 0 result: CapCut 9.5.0 on Windows, verified
+
+Run on 2026-09-21 against a real drafts store with a single-clip template
+made on CapCut mobile (version stamp 15.0.0) and last saved by the Windows
+desktop app 9.5.0.
+
+- `apply` cloned the template, replaced the one media slot, registered the
+  draft, and passed lint (0 issues) and the path-level diff (0 violations).
+  `--allow-untested-version` was required because the mobile stamp is beyond
+  capcut-cli's evidence range.
+- CapCut listed the new project, opened it, and played the clip.
+- The operator split the clip, saved, and closed. `learn` reported the split
+  as a shorter slot plus a new segment with its companion materials, and
+  **no app-rewrite paths on the fields we wrote**: CapCut 9.5 saved the draft
+  without re-quantising or re-stamping anything the pipeline touched.
+
+Format facts learned from this build:
+
+- Media paths are stored as `##_draftpath_placeholder_<id>_##/video/<file>`,
+  a token meaning the draft's own folder, not absolute paths. The pipeline
+  resolves the token for existence checks and leaves it as written.
+- Root `draft_content.json`, `template-2.tmp`, and the nested
+  `Timelines/<id>/draft_content.json` were byte-identical before and after.
+- Projects downloaded from CapCut mobile keep the mobile version stamp; the
+  desktop version lives in `last_modified_platform`.
 
 ## 6. Phase 1: template preparation (once per template)
 

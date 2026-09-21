@@ -6,6 +6,7 @@ Nothing in this module writes. Writes go through capcut-cli (see runner.py).
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterator
@@ -96,6 +97,24 @@ def parse_text_content(material: dict[str, Any]) -> dict[str, Any] | None:
     if not isinstance(parsed, dict) or "text" not in parsed:
         return None
     return parsed
+
+
+# Modern CapCut (9.x) stores media paths relative to the draft folder behind a
+# placeholder token instead of an absolute path. The app resolves it on open.
+PLACEHOLDER_RE = re.compile(r"^##_draftpath_placeholder_[0-9A-Za-z-]+_##[\\/]?")
+
+
+def is_placeholder_path(path: str) -> bool:
+    return bool(PLACEHOLDER_RE.match(path or ""))
+
+
+def resolve_media_path(path: str, draft_dir: Path) -> Path:
+    """Where a material's `path` points on disk for a draft living in draft_dir."""
+    if is_placeholder_path(path):
+        rest = PLACEHOLDER_RE.sub("", path).replace("\\", "/")
+        return Path(draft_dir) / rest
+    p = Path(path)
+    return p if p.is_absolute() else Path(draft_dir) / p
 
 
 def utf16_len(s: str) -> int:

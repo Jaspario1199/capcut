@@ -5,6 +5,8 @@ and turns the differences into labelled corrections:
 
   media_clip     the operator swapped the clip we chose for a slot
   media_inpoint  the operator moved the in-point inside the clip
+  media_trim     the operator changed how much of the clip the slot plays
+  split          a new segment appeared on a planned slot's track (the operator cut it)
   text           the operator rewrote our text
   other          anything else on a planned slot (transform, volume, ...)
 
@@ -23,7 +25,7 @@ from .diffing import diff
 from .draft import frame_us, iter_segments, load_doc, material_index, parse_text_content
 from .library import Correction, JobRecord
 
-_SEG = re.compile(r"^tracks\[([^\]]+)\]\.segments\[([^\]]+)\]\.(.+)$")
+_SEG = re.compile(r"^tracks\[([^\]]+)\]\.segments\[([^\]]+)\](?:\.(.+))?$")
 _MAT = re.compile(r"^materials\.(videos|audios|texts)\[([^\]]+)\]\.(.+)$")
 
 
@@ -45,11 +47,19 @@ def capture(job_dir: Path, rec: JobRecord) -> tuple[list[Correction], list[str]]
     corrections: list[Correction] = []
     rewrites: list[str] = []
     seen_clip: set[str] = set()
+    planned_tracks = {r.track_id for r in iter_segments(before) if r.id in planned_media or r.id in planned_text}
+    known_segments = {r.id for r in iter_segments(before)}
 
     for ch in diff(before, after).changes:
         m = _SEG.match(ch.path)
         if m:
-            _, seg_id, rest = m.groups()
+            track_id, seg_id, rest = m.groups()
+            rest = rest or ""
+            if seg_id not in known_segments and ch.kind == "added" and track_id in planned_tracks:
+                new_seg = ch.after if isinstance(ch.after, dict) else {}
+                corrections.append(Correction(seg_id, "split", None, new_seg.get("material_id"),
+                                              f"new segment on track {track_id}"))
+                continue
             if seg_id in planned_media:
                 if rest == "source_timerange.start":
                     if abs(int(ch.after or 0) - int(ch.before or 0)) > tol:
@@ -58,8 +68,10 @@ def capture(job_dir: Path, rec: JobRecord) -> tuple[list[Correction], list[str]]
                         rewrites.append(ch.path)
                 elif rest.startswith(("target_timerange", "source_timerange")):
                     delta = abs(int(ch.after or 0) - int(ch.before or 0)) if isinstance(ch.after, int) and isinstance(ch.before, int) else None
-                    (rewrites if delta is not None and delta <= tol else corrections).append(
-                        ch.path if delta is not None and delta <= tol else Correction(seg_id, "other", ch.before, ch.after, rest))
+                    if delta is not None and delta <= tol:
+                        rewrites.append(ch.path)
+                    else:
+                        corrections.append(Correction(seg_id, "media_trim", ch.before, ch.after, rest))
                 elif rest == "material_id":
                     corrections.append(Correction(seg_id, "media_clip", _mat_name(mats_before, ch.before), _mat_name(mats_after, ch.after)))
                     seen_clip.add(seg_id)

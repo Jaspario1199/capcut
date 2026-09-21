@@ -219,3 +219,22 @@ def test_export_prompt_lists_images_and_slots(manifest, footage_index, template_
     assert all(set(i) == {"for", "path"} for i in out["images"])
     assert len(out["images"]) == sum(len(s.thumbnails) for s in manifest.media) + sum(
         1 for c in footage_index.clips for s in c.scenes if s.thumbnail)
+
+
+def test_capture_labels_split_and_trim(template_doc, tmp_path):
+    rec, written = _applied_record(template_doc, tmp_path)
+    edited = copy.deepcopy(written)
+    a = seg(edited, MEDIA_SLOT_A)
+    a["target_timerange"]["duration"] = 2_000_000
+    a["source_timerange"]["duration"] = 3_000_000
+    second = copy.deepcopy(a)
+    second["id"] = "eeeeeeee-0000-0000-0000-000000000001"
+    second["target_timerange"] = {"start": 2_000_000, "duration": 3_000_000}
+    second["source_timerange"] = {"start": 3_000_000, "duration": 4_500_000}
+    edited["tracks"][0]["segments"].insert(1, second)
+    job = _write_job(tmp_path, edited)
+    corrections, rewrites = capture(job, rec)
+    kinds = sorted((c.slot_id[:8], c.kind) for c in corrections)
+    assert ("aaaaaa01", "media_trim") in kinds
+    assert ("eeeeeeee", "split") in kinds
+    assert not any("eeeeeeee" in r for r in rewrites)
