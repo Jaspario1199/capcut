@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "job_dir": "C:\\Users\\jaspe\\AppData\\Local\\CapCut\\User Data\\Projects\\com.lveditor.draft\\biopics-v3",
+  "draft_id": "cc9f8f72-64f1-4261-be1a-da2c8fe0aee8",
+  "library_job_id": "cc9f8f72-64f1-4261-be1a-da2c8fe0aee8",
+  "replaced": 89,
+  "batch": {
+    "ok": true,
+    "transactional": true,
+    "succeeded": 99,
+    "failed": 0,
+    "errors": []
+  },
+  "invariant_errors": [],
+  "diff_violations": [],
+  "lint_summary": {
+    "errors": 4,
+    "warnings": 151,
+    "info": 3,
+    "total": 158
+  },
+  "template_support": {
+    "app_version": "14.8.0",
+    "write_guard": "refuse",
+    "status": "untested",
+    "notes": [
+      "CapCut supported range: 6.x — 9.x",
+      "Version 14.8.0 is beyond the known range (6.x — 9.x) — no evidence this CLI can round-trip it",
+      "CapCut 14.8.0 is newer than any version this CLI has evidence for (supported range 6.x — 9.x). New builds are reported to reject tool-written drafts as corrupted.",
+      "If this project opens fine in your app, run `capcut fixture <project> --out <dir>` to build a redacted bundle and attach it to an issue so this version can move to fixture-tested; or pass --force-write to write anyway.",
+      "Timelines/ directory with a nested timeline document, on CapCut >= 8.7 storage. No discard risk is claimed here and none is ruled out: the 7.x report in issue #50 and the 8.5.0 open/close round trip in issue #68 both predate this storage generation, so what the app does with the nested document on >= 8.7 is unevidenced in either direction. Edit commands read and write the project-root files only; `capcut sync-timelines <project> --nested --apply` copies the root timeline into the nested documents as an explicit opt-in repair. If this project opens in your app with a CLI edit intact — or without it — that is the artifact issue #50 has been blocked on: `capcut fixture <project> --out <dir>`."
+    ]
+  }
+}
