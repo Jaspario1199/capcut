@@ -14,7 +14,8 @@ dependencies = []
 [project.optional-dependencies]
 scenes = ["scenedetect[opencv]>=0.6"]
 llm = ["anthropic>=1.7"]
-dev = ["pytest>=8"]
+cards = ["pillow>=10"]
+dev = ["pytest>=8", "pillow>=10"]
 
 [project.scripts]
 capcut-recreate = "capcut_recreate.cli:main"

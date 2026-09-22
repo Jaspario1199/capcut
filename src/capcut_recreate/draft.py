@@ -120,3 +120,25 @@ def resolve_media_path(path: str, draft_dir: Path) -> Path:
 def utf16_len(s: str) -> int:
     """Length in UTF-16 code units, the unit CapCut's style ranges use."""
     return len(s.encode("utf-16-le")) // 2
+
+
+def external_media_ids(doc: dict[str, Any], draft_dir: Path) -> list[str]:
+    """Ids of video/audio materials whose file lives outside the draft folder.
+
+    Placeholder-token paths and relative paths are inside by definition; an
+    absolute path is external when it does not sit under draft_dir. CapCut
+    keeps store-downloaded backgrounds and music in User Data/Cache this way.
+    """
+    root = str(Path(draft_dir).resolve()).replace("\\", "/").lower().rstrip("/") + "/"
+    out: list[str] = []
+    for cat in ("videos", "audios"):
+        for m in doc.get("materials", {}).get(cat, []):
+            p = m.get("path")
+            if not isinstance(p, str) or not p or p.startswith("http") or is_placeholder_path(p):
+                continue
+            if not Path(p).is_absolute():
+                continue
+            norm = str(Path(p).resolve()).replace("\\", "/").lower()
+            if not norm.startswith(root):
+                out.append(m["id"])
+    return out

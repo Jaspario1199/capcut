@@ -1,0 +1,521 @@
+{
+ "job_name": "biopics-v2",
+ "rationale": "Genre roulette lands on Biopic. 8 entries: quick cuts in each window from one film, PiP card box black as placeholder; full-length background layer and the white/black flash frames kept from the template for title cards; entries 6-8 black pending three more films; ratings randomised 7-10.",
+ "media": [
+  {
+   "slot_id": "DF92F624-8346-4F49-B284-84E111485C83",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "8D4BDB24-E211-4EBD-BBE8-73436FCFD8DE",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "FE11BCA1-94D4-4958-95D6-C6BA97221202",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "6A814C04-3443-42B7-8C2A-2FE180C578E4",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "302AF19F-31EB-45BF-B7E8-67C9AF8ABA28",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "12093F34-6673-4457-BF36-128F2C8959AD",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "2CBBC7A3-1FDD-459A-92B6-D8A4288579B7",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "DE82CE97-5D21-4C5D-AACA-C84A245C3D3A",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "D2C0D314-D81B-4F5C-BD88-8625F7F24E1C",
+   "clip_id": "c02",
+   "scene_id": "s93"
+  },
+  {
+   "slot_id": "9902B395-D203-42E9-A1D0-AE443A8DF8A3",
+   "clip_id": "c02",
+   "scene_id": "s89"
+  },
+  {
+   "slot_id": "3B8CCE84-F980-449A-97D9-BE0A65764592",
+   "clip_id": "c02",
+   "scene_id": "s44"
+  },
+  {
+   "slot_id": "25E3B858-4142-4D18-8702-90D61CA4A55B",
+   "clip_id": "c02",
+   "scene_id": "s154"
+  },
+  {
+   "slot_id": "B7EA9B32-5F0B-40AB-80E8-A5B27B1D7C9F",
+   "clip_id": "c02",
+   "scene_id": "s118"
+  },
+  {
+   "slot_id": "0D53CF11-A93C-46E5-BF74-B0D920893831",
+   "clip_id": "c02",
+   "scene_id": "s97"
+  },
+  {
+   "slot_id": "142BDE26-D03C-4341-8C0B-5FC912AD0C2E",
+   "clip_id": "c02",
+   "scene_id": "s36"
+  },
+  {
+   "slot_id": "6AAD2B3F-3B1B-4427-80AD-6696BDBE04F6",
+   "clip_id": "c02",
+   "scene_id": "s110"
+  },
+  {
+   "slot_id": "278483AA-72CA-4C1C-8736-95F00BF30CC4",
+   "clip_id": "c02",
+   "scene_id": "s78"
+  },
+  {
+   "slot_id": "4E938030-D415-4BEA-8607-77F87FC13DE4",
+   "clip_id": "c02",
+   "scene_id": "s116"
+  },
+  {
+   "slot_id": "E07FA214-E2DB-42D7-B10C-785A56F990B9",
+   "clip_id": "c02",
+   "scene_id": "s17"
+  },
+  {
+   "slot_id": "37ECDF2C-7EFF-4FC0-AC3F-368FA3F4E834",
+   "clip_id": "c02",
+   "scene_id": "s51"
+  },
+  {
+   "slot_id": "2C81D1AC-B305-440F-9C99-586DFDDEBA17",
+   "clip_id": "c04",
+   "scene_id": "s16"
+  },
+  {
+   "slot_id": "2610D4D2-8794-45AE-8742-8AC43EFF69D9",
+   "clip_id": "c04",
+   "scene_id": "s51"
+  },
+  {
+   "slot_id": "C1AE6906-9864-4F0F-A3A2-7CEB04CDCBEF",
+   "clip_id": "c04",
+   "scene_id": "s39"
+  },
+  {
+   "slot_id": "A02E6A27-E297-415F-96DF-F1DDAA38A171",
+   "clip_id": "c04",
+   "scene_id": "s5"
+  },
+  {
+   "slot_id": "AC91117C-16E8-4BFD-BF14-A31767647B80",
+   "clip_id": "c04",
+   "scene_id": "s49"
+  },
+  {
+   "slot_id": "9E4D07B5-59A4-4F7F-92DF-69681D20D10B",
+   "clip_id": "c04",
+   "scene_id": "s14"
+  },
+  {
+   "slot_id": "2B9DCCB2-F41B-4E89-B606-1F5A4D0C4CF2",
+   "clip_id": "c04",
+   "scene_id": "s54"
+  },
+  {
+   "slot_id": "25A23211-44E0-4A20-9C1D-136550BEF1DF",
+   "clip_id": "c04",
+   "scene_id": "s29"
+  },
+  {
+   "slot_id": "F355BB42-62FB-439C-A1F6-95E39DFB7062",
+   "clip_id": "c04",
+   "scene_id": "s40"
+  },
+  {
+   "slot_id": "FB50BA25-2365-4CC4-AAEA-E7B9825A32BE",
+   "clip_id": "c04",
+   "scene_id": "s1"
+  },
+  {
+   "slot_id": "C86374A7-F763-499E-9E48-F3B7C734AF6C",
+   "clip_id": "c04",
+   "scene_id": "s2"
+  },
+  {
+   "slot_id": "0416C208-9DF2-4D8A-B054-74A3F693CBE2",
+   "clip_id": "c04",
+   "scene_id": "s32"
+  },
+  {
+   "slot_id": "9F035B60-DB2A-4CFE-B61A-CDA3403ED3EA",
+   "clip_id": "c03",
+   "scene_id": "s7"
+  },
+  {
+   "slot_id": "36A6E996-FE77-40A2-BDB9-97384BDAB671",
+   "clip_id": "c03",
+   "scene_id": "s40"
+  },
+  {
+   "slot_id": "1F322BD1-CF62-4B79-AED3-3D0B3136E722",
+   "clip_id": "c03",
+   "scene_id": "s94"
+  },
+  {
+   "slot_id": "B60AA0BD-0BB4-474B-B332-B5DD5FE4792A",
+   "clip_id": "c03",
+   "scene_id": "s82"
+  },
+  {
+   "slot_id": "6B741C2F-57CB-487E-B0A8-4F08BF52BDB8",
+   "clip_id": "c03",
+   "scene_id": "s91"
+  },
+  {
+   "slot_id": "9E635293-2126-42DD-BA86-7326C8970FF1",
+   "clip_id": "c03",
+   "scene_id": "s31"
+  },
+  {
+   "slot_id": "6A5DC207-2407-4D5C-B225-8357E36315AB",
+   "clip_id": "c03",
+   "scene_id": "s43"
+  },
+  {
+   "slot_id": "FC1F0BD5-DDB5-41F5-A22E-AAD38D7C6B9E",
+   "clip_id": "c01",
+   "scene_id": "s1"
+  },
+  {
+   "slot_id": "65DD8FC6-FBA2-4476-B22A-9C02745A3B5B",
+   "clip_id": "c01",
+   "scene_id": "s22"
+  },
+  {
+   "slot_id": "D04CA4C5-CD6F-439C-B644-6E746B02AFAE",
+   "clip_id": "c01",
+   "scene_id": "s3"
+  },
+  {
+   "slot_id": "88EBAC9F-6733-4A25-99C9-FD7C8641D4D2",
+   "clip_id": "c01",
+   "scene_id": "s31"
+  },
+  {
+   "slot_id": "C7520075-20A9-438D-836A-7BC6F32D5355",
+   "clip_id": "c01",
+   "scene_id": "s33"
+  },
+  {
+   "slot_id": "F5365B5C-D8D1-4F35-89DA-7132A6EA3D51",
+   "clip_id": "c01",
+   "scene_id": "s2"
+  },
+  {
+   "slot_id": "441EB06A-9D36-467F-9B6C-A0C7EAEE928C",
+   "clip_id": "c01",
+   "scene_id": "s10"
+  },
+  {
+   "slot_id": "B1D5BF03-EC17-4309-95BC-5BED6CB147B0",
+   "clip_id": "c01",
+   "scene_id": "s34"
+  },
+  {
+   "slot_id": "74127192-C69E-4C47-AA63-0E8644681890",
+   "clip_id": "c01",
+   "scene_id": "s4"
+  },
+  {
+   "slot_id": "83302A5A-510E-4E22-BBAF-CE2F5C26DC7B",
+   "clip_id": "c01",
+   "scene_id": "s25"
+  },
+  {
+   "slot_id": "6C6E2FB2-9F67-42FC-BE8C-8848007E6369",
+   "clip_id": "c01",
+   "scene_id": "s32"
+  },
+  {
+   "slot_id": "63B7E4B9-5747-47B4-A9C3-3CF88F8CC4C8",
+   "clip_id": "c00",
+   "scene_id": "s39"
+  },
+  {
+   "slot_id": "37BDEF5D-2895-4ED1-8B5C-1B9649280A1E",
+   "clip_id": "c00",
+   "scene_id": "s43"
+  },
+  {
+   "slot_id": "6E8C98CD-986B-460C-9949-B711E6D3E575",
+   "clip_id": "c00",
+   "scene_id": "s2"
+  },
+  {
+   "slot_id": "B04C19E0-6FBE-432D-AD28-EC5236DEB988",
+   "clip_id": "c00",
+   "scene_id": "s14"
+  },
+  {
+   "slot_id": "975DA084-EAB4-478F-AA28-270CA417C2C2",
+   "clip_id": "c00",
+   "scene_id": "s5"
+  },
+  {
+   "slot_id": "7A9EB9C6-BA41-42CF-8A1C-540E90D78928",
+   "clip_id": "c00",
+   "scene_id": "s47"
+  },
+  {
+   "slot_id": "0DF323CC-8F32-428A-8554-B4CDF512C03D",
+   "clip_id": "c00",
+   "scene_id": "s41"
+  },
+  {
+   "slot_id": "D4856277-2DA9-4D0B-B77E-19D0A4711655",
+   "clip_id": "c00",
+   "scene_id": "s11"
+  },
+  {
+   "slot_id": "677BD556-DBF6-4315-AED3-E481AA950207",
+   "clip_id": "c00",
+   "scene_id": "s28"
+  },
+  {
+   "slot_id": "681F173E-5481-49E0-9905-68E0B622F62F",
+   "clip_id": "c00",
+   "scene_id": "s48"
+  },
+  {
+   "slot_id": "ACBC6713-173B-4821-ACA2-0AEE239B22DC",
+   "clip_id": "c00",
+   "scene_id": "s31"
+  },
+  {
+   "slot_id": "FD005C79-84F7-406D-870D-BE4F2583726C",
+   "clip_id": "c00",
+   "scene_id": "s29"
+  },
+  {
+   "slot_id": "4237252F-22C8-40B8-8149-95DC8DE2A92F",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "003DF178-75A2-43F8-8DF8-B6840187AA39",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "0468D9B7-C717-4BA7-9100-C9AF54C4E16F",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "DC14623A-F512-4D3E-8179-EA4DC106F430",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "00B3D075-0FB0-4AFD-9B92-9CC7ECAB866E",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "B553CE10-8137-4D24-AF06-B34BFDCFA221",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "74E1BBAE-162C-4B9B-A35E-DF236ADD4D17",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "1E431931-B50E-4BC3-B787-E258FFD3554D",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "EBFB4C45-3D5B-4CD1-BBBC-50DEBECD30C3",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "0590D5B3-9067-46F5-8A96-FFA7B867EB27",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "F96DB529-DE86-42B9-A661-4D70614DDEDA",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "EF826F4E-96F1-47BB-9F87-346A09F33AF6",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "D5C1CDDA-E563-466E-9D48-54F7F7703253",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "CAFBCD79-B350-4EAF-A631-7756C88CD3AA",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "E9979371-2A2A-436D-8BF3-96264BC85318",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "D9555A31-DFCE-4545-B97C-4A88B436103F",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "5E34B94F-BACB-4881-A593-DE8A08F4E765",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "E90A1A12-9522-4F04-8C70-4168F8DE09FB",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "DDF20A09-F67A-4903-878E-5B4440738029",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "1B0D9530-2A45-48BB-9663-E6DE3B0937CA",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "E8852476-FC24-441A-BE40-D91128478EC9",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "D166DE79-71A2-48E7-993D-5D5E40DD9B31",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "B2F1D88B-093C-4234-AB31-7C565AAC685E",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "3B3CC371-DE55-4CCC-B9F1-A4B0B64F8209",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "093B100E-4A14-4E2F-A4D3-12BA49FB9066",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "6D6811C3-9BB7-49ED-A4CC-AB2A61B8E882",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "4012BBDF-BA5B-47DF-95F7-DDE7B9C0DED2",
+   "clip_id": "c05",
+   "scene_id": "s0"
+  },
+  {
+   "slot_id": "5E07D7B3-86AD-45EE-92D0-2251CED6FA8A",
+   "clip_id": "",
+   "scene_id": "",
+   "keep": true
+  },
+  {
+   "slot_id": "9852622F-2301-4227-9B62-03389BAFBA5E",
+   "clip_id": "",
+   "scene_id": "",
+   "keep": true
+  },
+  {
+   "slot_id": "A160A020-68CA-48C4-A1DE-95DACFA0C669",
+   "clip_id": "",
+   "scene_id": "",
+   "keep": true
+  },
+  {
+   "slot_id": "1B5A36AD-2D71-4227-944D-53F5FEFAA062",
+   "clip_id": "",
+   "scene_id": "",
+   "keep": true
+  }
+ ],
+ "text": [
+  {
+   "slot_id": "1AF4A2B3-FE05-4F3F-8662-90B3B1D20B93",
+   "new_text": "9.1/10"
+  },
+  {
+   "slot_id": "83E87349-0968-4947-993B-7A4C68E12DF2",
+   "new_text": "7.6/10"
+  },
+  {
+   "slot_id": "081710FC-C788-42FD-BFD0-02416CAAB0D8",
+   "new_text": "7.2/10"
+  },
+  {
+   "slot_id": "7B27A741-9B12-49AB-B8F1-B5902FFAC329",
+   "new_text": "8.3/10"
+  },
+  {
+   "slot_id": "3C97EB6D-4996-42B4-A8E6-7DD774DCAAEA",
+   "new_text": "8.7/10"
+  },
+  {
+   "slot_id": "0F93284E-2309-4A50-9955-28DF672930F0",
+   "new_text": "9.8/10"
+  },
+  {
+   "slot_id": "11EC8277-BDB0-4688-B3D4-A65C7BC3BC74",
+   "new_text": "7.9/10"
+  },
+  {
+   "slot_id": "2BA79FCF-FA52-46C9-908E-D67ACCAD42CB",
+   "new_text": "9.4/10"
+  },
+  {
+   "slot_id": "EA9D296E-AABC-4D57-BAD6-78EADDF96A26",
+   "new_text": "Biopic"
+  },
+  {
+   "slot_id": "C2762736-A748-4830-9681-101A53508CAF",
+   "new_text": "BIOPICS OF ALL TIME"
+  },
+  {
+   "slot_id": "FC2F3C48-C03D-442E-87F2-37B776966C47",
+   "new_text": "THE GREATEST"
+  }
+ ]
+}

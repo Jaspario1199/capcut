@@ -16,8 +16,11 @@ If the manifest or footage index does not exist yet, build them first:
 
 ```bash
 capcut-recreate manifest <template-dir> -o manifest.json --thumbs ./thumbs
-capcut-recreate index ./staging <clips...> -o footage.json
+capcut-recreate index ./staging <clips and images...> -o footage.json
 ```
+
+`index` takes mp4/mov and png/jpg alike; images become `kind: "image"` clips
+with one scene and are the only thing a photo slot accepts.
 
 Read the manifest's slot counts (printed on stderr). Fewer than about 15
 replaceable media slots: plan in one pass. More: plan in chunks.
@@ -34,7 +37,18 @@ replaceable media slots: plan in one pass. More: plan in chunks.
    spans the whole video, a white or black flash, a texture or gradient
    layer), write `{"slot_id": "...", "clip_id": "", "scene_id": "", "keep": true}`
    to leave it as the template had it. Only put footage where the template
-   showed footage.
+   showed footage. Slots whose template media lives in CapCut's online
+   material cache (`Cache/onlineMaterial`, the white and black flash frames)
+   must be kept: the app reverts them on save.
+   A slot with `media_type: "photo"` showed a still image (poster, title art,
+   logo). It takes an image clip only. Make one per entry with
+   `capcut-recreate titlecard "FILM|Person" -o cards/01.png --like <template png>`
+   (or `--size WxH` matching `template_media_size`), index the cards with the
+   footage, and fill each photo slot with its card. Never put a video or a
+   black placeholder in a photo slot.
+   One slot, one shot: the slot's source length must fit inside the chosen
+   scene, not just the clip. `check` rejects a choice that crosses a detected
+   cut, because that adds a cut the template never had, off the beat.
 4. `capcut-recreate check manifest.json footage.json plan.json`; fix every
    error and re-check until `ok` is true. At most three rounds; then show the
    user the remaining errors and stop.

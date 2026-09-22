@@ -180,6 +180,52 @@
       ]
     },
     {
+      "id": "track-video-03",
+      "type": "video",
+      "name": "Title art",
+      "is_default_name": false,
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "eeeeee01-0000-0000-0000-000000000001",
+          "material_id": "mat-photo-01",
+          "extra_material_refs": [],
+          "target_timerange": {
+            "start": 3000000,
+            "duration": 2000000
+          },
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000000
+          },
+          "speed": 1.0,
+          "volume": 1.0,
+          "visible": true,
+          "render_index": 2,
+          "track_render_index": 2,
+          "clip": {
+            "alpha": 1,
+            "rotation": 0,
+            "scale": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "transform": {
+              "x": 0.0,
+              "y": 0.3
+            },
+            "flip": {
+              "horizontal": false,
+              "vertical": false
+            }
+          },
+          "common_keyframes": [],
+          "keyframe_refs": []
+        }
+      ]
+    },
+    {
       "id": "track-audio-01",
       "type": "audio",
       "name": "Audio 1",
@@ -387,6 +433,16 @@
         "width": 320,
         "height": 240,
         "has_audio": true
+      },
+      {
+        "id": "mat-photo-01",
+        "type": "photo",
+        "path": "assets/image/title.png",
+        "material_name": "title.png",
+        "duration": 10800000000,
+        "width": 320,
+        "height": 240,
+        "has_audio": false
       }
     ],
     "audios": [

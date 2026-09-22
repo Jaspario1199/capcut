@@ -4,7 +4,7 @@ import copy
 from conftest import MEDIA_SLOT_A
 
 from capcut_recreate.diffing import diff
-from capcut_recreate.validate import validate_doc
+from capcut_recreate.validate import new_invariant_errors, validate_doc
 
 
 def seg(doc, sid):
@@ -102,3 +102,17 @@ def test_placeholder_media_paths(tmp_path):
     missing = {"materials": {"videos": [{"id": "m1", "path": token + "/video/b.mov"}], "audios": []}}
     with pytest.raises(ApplyError, match="does not resolve"):
         _check_relink(missing, missing, tmp_path)
+
+
+def test_template_errors_are_not_blamed_on_apply(template_doc):
+    broken = copy.deepcopy(template_doc)
+    seg = next(s for t in broken["tracks"] for s in t["segments"] if s["id"] == MEDIA_SLOT_A)
+    seg["common_keyframes"] = [{"property_type": "KFTypeVolume", "keyframe_list": [{"time_offset": 10**9}]}]
+    assert validate_doc(broken)
+    # same defect copied verbatim into the new draft: not an apply error
+    assert new_invariant_errors(broken, copy.deepcopy(broken)) == []
+    # a defect that only the new draft has still fails
+    worse = copy.deepcopy(broken)
+    seg2 = next(s for t in worse["tracks"] for s in t["segments"] if s["id"] == MEDIA_SLOT_A)
+    seg2["source_timerange"]["duration"] += 10**7
+    assert new_invariant_errors(broken, worse)

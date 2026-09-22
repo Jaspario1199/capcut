@@ -29,7 +29,17 @@ replaceable text slot should say. Deterministic code (this repo, on top of
   person it is about.
 - New footage: clips in `C:\Users\jaspe\Videos\4K Video Downloader+`
   (landscape downloads; that is fine, orientation mismatch is only a warning).
-- Job name: `biopics-v1`.
+- Jobs so far: `biopics-v1` (clips never loaded: stale `unique_id`, fixed),
+  `biopics-v2` (clips load; its eight photo slots got a black placeholder
+  video, which is what the operator saw as "black frames where titles go").
+  Next job: `biopics-v3`, same plan plus one title card per entry.
+- The template's eight ranked entries each carry a **photo slot** (tracks 5 to
+  7, one per entry) that held poster or title art. Photo slots take images
+  only. Render one per entry with `capcut-recreate titlecard "FILM|Person"`
+  sized like the template's PNG (`template_media_size` in the prompt), index
+  the cards alongside the footage, and fill each photo slot with its card.
+- The operator wants each slot to stay inside one shot. `check` now rejects a
+  scene choice that would cross a detected cut.
 
 The animated or other templates are not the current job unless the operator
 says so.
@@ -43,6 +53,17 @@ says so.
 - CapCut must be **closed** during `apply`; the pipeline refuses otherwise.
 - CapCut 9.x stores media paths as `##_draftpath_placeholder_<id>_##/...`;
   the pipeline resolves that token. Do not rewrite those paths.
+- CapCut 9.x keys its per-file probe cache
+  (`User Data\Cache\importcache3\mediainfo\<unique_id>.json`) by the video
+  material's `unique_id` = MD5 of the absolute forward-slash path. capcut-cli's
+  `replace-media` keeps the template's value, so a replaced clip reads the old
+  file's probe and never finishes loading (striped track, black preview; this
+  was biopics-v1). `apply` now recomputes `unique_id` for every replaced video
+  material as its last write. The file format was never the problem: the
+  downloads are 1080p H.264, the same shape as the template's own footage.
+- Slots whose template media is an online library asset (the white and black
+  flash frames, path under `Cache/onlineMaterial`) must be `keep: true`; CapCut
+  reverts their path on save even when replaced.
 
 ## How to run the current job
 
@@ -51,9 +72,12 @@ Use the `/capcut-plan` skill (`.claude/skills/capcut-plan/SKILL.md`). In short:
 ```powershell
 $p = "$env:LOCALAPPDATA\CapCut\User Data\Projects\com.lveditor.draft\0805 Copy Copy Copy"
 $store = "$env:LOCALAPPDATA\CapCut\User Data\Projects\com.lveditor.draft"
-$clips = (Get-ChildItem "C:\Users\jaspe\Videos\4K Video Downloader+" -Recurse -Include *.mp4,*.mov).FullName
+$clips = (Get-ChildItem "C:\Users\jaspe\Videos\biopics-h264" -Recurse -Include *.mp4,*.mov).FullName
 python -m capcut_recreate.cli manifest $p -o real.json --thumbs realthumbs
-python -m capcut_recreate.cli index staging $clips -o footage.json
+# one title card per ranked entry, sized like the template's own title PNG
+python -m capcut_recreate.cli titlecard "MONEYBALL|Billy Beane" -o cards/01.png --like "$p\<template title>.png" --upper
+$cards = (Get-ChildItem cards -Include *.png -Recurse).FullName
+python -m capcut_recreate.cli index staging ($clips + $cards) -o footage.json
 python -m capcut_recreate.cli prompt real.json footage.json --job biopics-v1 --brief "<brief above>" --chunk 12 -o chunks
 # plan each chunks/chunk_XX.prompt.json -> chunks/chunk_XX.plan.json, check each against its chunk manifest
 python -m capcut_recreate.cli merge-plans chunks/*.plan.json --job biopics-v1 -o plan.json

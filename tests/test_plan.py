@@ -1,5 +1,5 @@
 import pytest
-from conftest import MEDIA_SLOT_A, MEDIA_SLOT_MASK, MEDIA_SLOT_PIP, TEXT_SLOT_MULTI, TEXT_SLOT_OK
+from conftest import MEDIA_SLOT_A, MEDIA_SLOT_MASK, MEDIA_SLOT_PHOTO, MEDIA_SLOT_PIP, TEXT_SLOT_MULTI, TEXT_SLOT_OK
 
 from capcut_recreate.plan import Plan, validate_plan
 
@@ -8,7 +8,8 @@ def good_plan() -> Plan:
     return Plan.from_json({
         "job_name": "job",
         "media": [{"slot_id": MEDIA_SLOT_A, "clip_id": "c00", "scene_id": "s0"},
-                  {"slot_id": MEDIA_SLOT_PIP, "clip_id": "c02", "scene_id": "s0"}],
+                  {"slot_id": MEDIA_SLOT_PIP, "clip_id": "c02", "scene_id": "s0"},
+                  {"slot_id": MEDIA_SLOT_PHOTO, "clip_id": "c03", "scene_id": "s0"}],
         "text": [{"slot_id": TEXT_SLOT_OK, "new_text": "Welcome back"}],
     })
 
@@ -21,7 +22,9 @@ def clip_ids(index):
 def test_good_plan_resolves(manifest, footage_index):
     errors, resolved = validate_plan(good_plan(), manifest, footage_index)
     assert errors == []
-    assert {r.slot_id for r in resolved} == {MEDIA_SLOT_A, MEDIA_SLOT_PIP}
+    assert {r.slot_id for r in resolved} == {MEDIA_SLOT_A, MEDIA_SLOT_PIP, MEDIA_SLOT_PHOTO}
+    photo = next(r for r in resolved if r.slot_id == MEDIA_SLOT_PHOTO)
+    assert photo.kind == "image" and photo.clip_path.endswith("poster.png")
     a = next(r for r in resolved if r.slot_id == MEDIA_SLOT_A)
     assert a.source_duration_us == 7_500_000 and a.in_point_us == 0
 
@@ -42,7 +45,7 @@ def test_locked_slot_rejected(manifest, footage_index):
 
 def test_unfilled_replaceable_slot(manifest, footage_index):
     p = good_plan()
-    p.media = p.media[:1]
+    p.media = [m for m in p.media if m.slot_id != MEDIA_SLOT_PIP]
     errors, _ = validate_plan(p, manifest, footage_index)
     assert any(MEDIA_SLOT_PIP in e and "not filled" in e for e in errors)
 
@@ -76,7 +79,7 @@ def test_orientation_mismatch_is_a_warning(manifest, footage_index):
     errors, warnings, resolved = validate_plan_full(good_plan(), manifest, footage_index)
     assert errors == []
     assert any("orientation" in w for w in warnings)
-    assert len(resolved) == 2
+    assert len(resolved) == 3
 
 
 def test_keep_slot_counts_as_filled(manifest, footage_index):
@@ -84,13 +87,14 @@ def test_keep_slot_counts_as_filled(manifest, footage_index):
     p.media[1] = type(p.media[1])(MEDIA_SLOT_PIP, keep=True)
     errors, resolved = validate_plan(p, manifest, footage_index)
     assert errors == []
-    assert [r.slot_id for r in resolved] == [MEDIA_SLOT_A]
+    assert [r.slot_id for r in resolved] == [MEDIA_SLOT_A, MEDIA_SLOT_PHOTO]
 
 
 def test_plan_json_keep_roundtrip(manifest, footage_index):
     p = Plan.from_json({"job_name": "j",
                         "media": [{"slot_id": MEDIA_SLOT_A, "clip_id": "c00", "scene_id": "s0", "keep": False},
-                                  {"slot_id": MEDIA_SLOT_PIP, "clip_id": "", "scene_id": "", "keep": True}],
+                                  {"slot_id": MEDIA_SLOT_PIP, "clip_id": "", "scene_id": "", "keep": True},
+                                  {"slot_id": MEDIA_SLOT_PHOTO, "clip_id": "", "scene_id": "", "keep": True}],
                         "text": []})
     errors, resolved = validate_plan(p, manifest, footage_index)
     assert errors == [] and len(resolved) == 1
@@ -101,3 +105,22 @@ def test_missing_clip_without_keep_is_an_error(manifest, footage_index):
     p.media[1] = type(p.media[1])(MEDIA_SLOT_PIP)
     errors, _ = validate_plan(p, manifest, footage_index)
     assert any("keep: true" in e for e in errors)
+
+
+def test_photo_slot_rejects_video_and_video_slot_rejects_image(manifest, footage_index):
+    p = good_plan()
+    p.media[2] = type(p.media[2])(MEDIA_SLOT_PHOTO, "c02", "s0")  # video into the photo slot
+    p.media[1] = type(p.media[1])(MEDIA_SLOT_PIP, "c03", "s0")    # image into a video slot
+    errors, _ = validate_plan(p, manifest, footage_index)
+    assert any(MEDIA_SLOT_PHOTO in e and "needs an image" in e for e in errors)
+    assert any(MEDIA_SLOT_PIP in e and "cannot take image" in e for e in errors)
+
+
+def test_slot_may_not_cross_a_shot_cut(manifest, footage_index):
+    from capcut_recreate.footage import Scene
+
+    idx = footage_index
+    c00 = idx.by_id()["c00"]  # 8 s clip; slot A needs 7.5 s of source
+    c00.scenes = [Scene("s0", 0, 4_000_000), Scene("s1", 4_000_000, 8_000_000)]
+    errors, _ = validate_plan(good_plan(), manifest, idx)
+    assert any(MEDIA_SLOT_A in e and "cross a shot cut" in e for e in errors)

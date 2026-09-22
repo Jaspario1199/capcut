@@ -7,6 +7,7 @@ Sequence (each step verified by the adversarial review against capcut-cli 0.25.0
        assert new_duration_us != null, assert staged asset md5 == source md5
   3. one capcut batch: trim per media slot (string times), set-text per text slot
   4. capcut register --materials --apply ; capcut lint --fix
+  4b. refresh material.unique_id on every replaced video material (see _refresh_unique_ids)
   5. own invariant validator
   6. own path-level diff against the template with an allowlist
   7. capcut lint for information only
@@ -18,6 +19,7 @@ because every capcut-cli write is atomic and we abort on the first error.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import shutil
@@ -27,12 +29,14 @@ from typing import Any
 
 from . import runner
 from .diffing import apply_allowlist, diff
-from .draft import US, find_doc, is_placeholder_path, iter_segments, load_doc, resolve_media_path
+from .draft import US, find_doc, is_placeholder_path, iter_segments, load_doc, resolve_media_path, external_media_ids
 from .footage import md5_file
 from .library import Library
 from .manifest import Manifest
 from .plan import Plan, ResolvedMedia
 
+LINT_NO_CAP_SECS = 100_000
+LINT_NO_CAP_CHARS = 100_000
 KNOWN_WARNING = re.compile(r"^New clip is [\d.]+s but the segment uses up to [\d.]+s of source")
 
 
@@ -51,6 +55,7 @@ class ApplyReport:
     invariant_errors: list[str] = field(default_factory=list)
     diff_violations: list[str] = field(default_factory=list)
     lint_info: dict[str, Any] | None = None
+    unique_ids: dict[str, str] = field(default_factory=dict)
     library_job_id: str | None = None
     ok: bool = False
 
@@ -150,7 +155,7 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
         # paths lint and the app resolve against the wrong base. Relink every
         # material to the clone's own assets/ so the job is self-contained.
         runner.run("relink", str(doc_path), **{"from": str(template_dir), "to": str(job_dir)}, force_write=fw)
-        for kind in ("video", "audio"):
+        for kind in ("video", "audio", "image"):
             adir = job_dir / "assets" / kind
             if adir.is_dir():
                 runner.run("relink", str(doc_path), dir=str(adir), force_write=fw)
@@ -159,7 +164,9 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
         media_slots = manifest.media_by_id()
         for r in resolved:
             res = runner.run("replace-media", str(doc_path), r.slot_id, r.clip_path, force_write=fw)
-            if res.get("new_duration_us") in (None, 0):
+            # A still has no duration; replace-media then leaves the photo material's nominal
+            # 3 h duration alone, which is what CapCut wants. Videos must probe.
+            if r.kind != "image" and res.get("new_duration_us") in (None, 0):
                 raise ApplyError(f"{r.slot_id}: replace-media returned no duration (ffprobe?)")
             new_path = Path(res["new_path"])
             if not new_path.is_absolute():
@@ -173,6 +180,8 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
 
         ops = []
         for r in resolved:
+            if r.kind == "image":
+                continue  # a photo segment's source range is not an in-point into a file
             ops.append({"cmd": "trim", "id": r.slot_id, "start": _us_to_s(r.in_point_us),
                         "duration": _us_to_s(r.source_duration_us)})
         for t in plan.text:
@@ -184,22 +193,34 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
         # capcut-cli refuses index writes while the app runs; only scratch stores pass force_write.
         report.register = runner.run("register", str(job_dir), apply=True, materials=True, drafts=str(store),
                                      force_write=fw)
-        fix = runner.run_raw("lint", str(doc_path), fix=True, force_write=fw)
+        # lint --fix is run for its media-outside-draft staging and draft_materials linking only.
+        # Its caption rules would otherwise shorten or re-wrap template text (the 0805 titles run
+        # 14 s and lint capped them at 7 s), so push those thresholds out of reach.
+        fix = runner.run_raw("lint", str(doc_path), fix=True, force_write=fw,
+                             max_cue_secs=LINT_NO_CAP_SECS, max_chars=LINT_NO_CAP_CHARS, min_gap_ms=0)
         report.lint_fix = fix.data
         if fix.status not in (0, 1, 2):
             raise ApplyError(f"lint --fix crashed: {fix.stderr}")
         if sync_nested:
             runner.run("sync-timelines", str(job_dir), nested=True, apply=True, force_write=fw)
+        # Last write: nothing from capcut-cli runs after this, so its changed-on-disk guard never trips.
+        report.unique_ids = _refresh_unique_ids(job_dir, [media_slots[r.slot_id].material_id for r in resolved],
+                                                nested=sync_nested)
 
-        from .validate import validate_doc
+        from .validate import new_invariant_errors
         new_doc = load_doc(job_dir)
-        report.invariant_errors = validate_doc(new_doc)
+        report.invariant_errors = new_invariant_errors(template_doc, new_doc)
 
         seg_track = {ref.id: ref.track_id for ref in iter_segments(template_doc)}
         replaced_mats = [media_slots[r.slot_id].material_id for r in resolved]
         text_mats = [manifest.text_by_id()[t.slot_id].material_id for t in plan.text]
+        # lint --fix stages media that lives outside the template (CapCut's online-material and
+        # music caches) into assets/ and renames the material after the file; CapCut restores the
+        # cache path on save. Allow that bookkeeping on exactly those materials.
+        external = external_media_ids(template_doc, template_dir)
+        extra = [rf"^materials\.(videos|audios)\[{re.escape(mid)}\]\.(name|material_name)$" for mid in external]
         allow = apply_allowlist([r.slot_id for r in resolved], [t.slot_id for t in plan.text],
-                                replaced_mats, text_mats, seg_track)
+                                replaced_mats, text_mats, seg_track, extra=extra)
         d = diff(template_doc, new_doc)
         report.diff_violations = [str(c) for c in d.filtered(allow)]
 
@@ -241,6 +262,52 @@ def _check_relink(template_doc: dict[str, Any], new_doc: dict[str, Any], job_dir
                 raise ApplyError(f"{m['id']}: media {path} does not resolve to a file in the job ({resolved})")
             if not is_placeholder_path(path) and not Path(path).is_absolute():
                 raise ApplyError(f"{m['id']}: path {path} is neither absolute nor a draft placeholder after relink")
+
+
+def unique_id_for(path: str) -> str:
+    """CapCut desktop's material.unique_id: MD5 of the absolute path with forward slashes.
+
+    Verified on CapCut 9.5.0 (2026-09-21): the app keys its per-file probe cache
+    (User Data/Cache/importcache3/mediainfo/<unique_id>.json) by this value.
+    """
+    return hashlib.md5(path.replace("\\", "/").encode("utf-8")).hexdigest()
+
+
+def _refresh_unique_ids(job_dir: Path, material_ids: list[str], nested: bool = False) -> dict[str, str]:
+    """Recompute unique_id for replaced video materials.
+
+    replace-media keeps the template's unique_id, so CapCut reads the template
+    file's cached probe (duration, dimensions, stream layout) for the new file
+    and the clip never finishes loading: striped track, black preview. Seen on
+    biopics-v1, every replaced slot; the same-file phase-0 test could not show it.
+    """
+    docs = [find_doc(job_dir)]
+    if nested:
+        proj = job_dir / "Timelines" / "project.json"
+        if proj.exists():
+            main_id = json.loads(proj.read_text()).get("main_timeline_id")
+            for name in ("draft_content.json", "draft_info.json"):
+                inner = job_dir / "Timelines" / str(main_id) / name
+                if main_id and inner.exists():
+                    docs.append(inner)
+    wanted = set(material_ids)
+    out: dict[str, str] = {}
+    for doc_path in docs:
+        doc = json.loads(doc_path.read_bytes())
+        changed = False
+        for m in doc["materials"].get("videos", []):
+            if m.get("id") in wanted and m.get("path"):
+                uid = unique_id_for(m["path"])
+                if m.get("unique_id") != uid:
+                    m["unique_id"] = uid
+                    changed = True
+                out[m["id"]] = uid
+        if changed:
+            doc_path.write_bytes(json.dumps(doc, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+    missing = wanted - set(out)
+    if missing:
+        raise ApplyError(f"unique_id refresh: replaced materials not found in document: {sorted(missing)}")
+    return out
 
 
 def _drop_root_entry(store: Path, job_dir: str) -> None:

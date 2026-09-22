@@ -57,6 +57,8 @@ class MediaSlot:
     material_type: str = ""
     path: str = ""
     material_duration_us: int = 0
+    material_width: int = 0
+    material_height: int = 0
     target_start_us: int = 0
     target_duration_us: int = 0
     source_start_us: int = 0
@@ -175,6 +177,8 @@ def _media_slot(ref: SegRef, mats: dict, users: dict, z: int) -> MediaSlot:
         material_type=str(mat.get("type", cat)),
         path=str(mat.get("path", "")),
         material_duration_us=int(mat.get("duration") or 0),
+        material_width=int(mat.get("width") or 0),
+        material_height=int(mat.get("height") or 0),
         target_start_us=int(tgt.get("start", 0)),
         target_duration_us=int(tgt.get("duration", 0)),
         source_start_us=int(src.get("start", 0)),

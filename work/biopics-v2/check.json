@@ -1,0 +1,657 @@
+{
+  "ok": true,
+  "errors": [],
+  "resolved": [
+    {
+      "slot_id": "DF92F624-8346-4F49-B284-84E111485C83",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 5300000
+    },
+    {
+      "slot_id": "8D4BDB24-E211-4EBD-BBE8-73436FCFD8DE",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 7533333
+    },
+    {
+      "slot_id": "FE11BCA1-94D4-4958-95D6-C6BA97221202",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 4066666
+    },
+    {
+      "slot_id": "6A814C04-3443-42B7-8C2A-2FE180C578E4",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 6400000
+    },
+    {
+      "slot_id": "302AF19F-31EB-45BF-B7E8-67C9AF8ABA28",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 6966666
+    },
+    {
+      "slot_id": "12093F34-6673-4457-BF36-128F2C8959AD",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 4066666
+    },
+    {
+      "slot_id": "2CBBC7A3-1FDD-459A-92B6-D8A4288579B7",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 4666666
+    },
+    {
+      "slot_id": "DE82CE97-5D21-4C5D-AACA-C84A245C3D3A",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 6966666
+    },
+    {
+      "slot_id": "D2C0D314-D81B-4F5C-BD88-8625F7F24E1C",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 306472833,
+      "source_duration_us": 14266666
+    },
+    {
+      "slot_id": "9902B395-D203-42E9-A1D0-AE443A8DF8A3",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 295920622,
+      "source_duration_us": 1166666
+    },
+    {
+      "slot_id": "3B8CCE84-F980-449A-97D9-BE0A65764592",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 143351544,
+      "source_duration_us": 666666
+    },
+    {
+      "slot_id": "25E3B858-4142-4D18-8702-90D61CA4A55B",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 482815667,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "B7EA9B32-5F0B-40AB-80E8-A5B27B1D7C9F",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 391933211,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "0D53CF11-A93C-46E5-BF74-B0D920893831",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 325325000,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "142BDE26-D03C-4341-8C0B-5FC912AD0C2E",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 119494378,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "6AAD2B3F-3B1B-4427-80AD-6696BDBE04F6",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 356272578,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "278483AA-72CA-4C1C-8736-95F00BF30CC4",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 250583667,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "4E938030-D415-4BEA-8607-77F87FC13DE4",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 384759378,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "E07FA214-E2DB-42D7-B10C-785A56F990B9",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 57098711,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "37ECDF2C-7EFF-4FC0-AC3F-368FA3F4E834",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 164873044,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "2C81D1AC-B305-440F-9C99-586DFDDEBA17",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 65356956,
+      "source_duration_us": 533333
+    },
+    {
+      "slot_id": "2610D4D2-8794-45AE-8742-8AC43EFF69D9",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 177719211,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "C1AE6906-9864-4F0F-A3A2-7CEB04CDCBEF",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 144936456,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "A02E6A27-E297-415F-96DF-F1DDAA38A171",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 20395378,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "AC91117C-16E8-4BFD-BF14-A31767647B80",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 169419244,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "9E4D07B5-59A4-4F7F-92DF-69681D20D10B",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 53887167,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "2B9DCCB2-F41B-4E89-B606-1F5A4D0C4CF2",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 190023167,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "25A23211-44E0-4A20-9C1D-136550BEF1DF",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 107899456,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "F355BB42-62FB-439C-A1F6-95E39DFB7062",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 148898744,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "FB50BA25-2365-4CC4-AAEA-E7B9825A32BE",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 7507500,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "C86374A7-F763-499E-9E48-F3B7C734AF6C",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 8383378,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "0416C208-9DF2-4D8A-B054-74A3F693CBE2",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\c2dae82aa0_Visuals - Goodfellas (4K).mp4",
+      "clip_md5": "c2dae82aa0a832b27850c68012347c48",
+      "in_point_us": 120286833,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "9F035B60-DB2A-4CFE-B61A-CDA3403ED3EA",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\663ca653ae_The Theory of Everything.mp4",
+      "clip_md5": "663ca653ae5597fa5cf503fb096461ce",
+      "in_point_us": 19019000,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "36A6E996-FE77-40A2-BDB9-97384BDAB671",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\663ca653ae_The Theory of Everything.mp4",
+      "clip_md5": "663ca653ae5597fa5cf503fb096461ce",
+      "in_point_us": 66066000,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "1F322BD1-CF62-4B79-AED3-3D0B3136E722",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\663ca653ae_The Theory of Everything.mp4",
+      "clip_md5": "663ca653ae5597fa5cf503fb096461ce",
+      "in_point_us": 144269122,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "B60AA0BD-0BB4-474B-B332-B5DD5FE4792A",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\663ca653ae_The Theory of Everything.mp4",
+      "clip_md5": "663ca653ae5597fa5cf503fb096461ce",
+      "in_point_us": 116866744,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "6B741C2F-57CB-487E-B0A8-4F08BF52BDB8",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\663ca653ae_The Theory of Everything.mp4",
+      "clip_md5": "663ca653ae5597fa5cf503fb096461ce",
+      "in_point_us": 136678211,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "9E635293-2126-42DD-BA86-7326C8970FF1",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\663ca653ae_The Theory of Everything.mp4",
+      "clip_md5": "663ca653ae5597fa5cf503fb096461ce",
+      "in_point_us": 50884167,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "6A5DC207-2407-4D5C-B225-8357E36315AB",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\663ca653ae_The Theory of Everything.mp4",
+      "clip_md5": "663ca653ae5597fa5cf503fb096461ce",
+      "in_point_us": 68985578,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "FC1F0BD5-DDB5-41F5-A22E-AAD38D7C6B9E",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\161b748d32_Leonardo Dicaprio (the wolf of wall street) scene pack 1080p + mega link.mp4",
+      "clip_md5": "161b748d3275d1910bfbe07e42ba36eb",
+      "in_point_us": 11469789,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "65DD8FC6-FBA2-4476-B22A-9C02745A3B5B",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\161b748d32_Leonardo Dicaprio (the wolf of wall street) scene pack 1080p + mega link.mp4",
+      "clip_md5": "161b748d3275d1910bfbe07e42ba36eb",
+      "in_point_us": 101434667,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "D04CA4C5-CD6F-439C-B644-6E746B02AFAE",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\161b748d32_Leonardo Dicaprio (the wolf of wall street) scene pack 1080p + mega link.mp4",
+      "clip_md5": "161b748d3275d1910bfbe07e42ba36eb",
+      "in_point_us": 24566211,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "88EBAC9F-6733-4A25-99C9-FD7C8641D4D2",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\161b748d32_Leonardo Dicaprio (the wolf of wall street) scene pack 1080p + mega link.mp4",
+      "clip_md5": "161b748d3275d1910bfbe07e42ba36eb",
+      "in_point_us": 132882744,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "C7520075-20A9-438D-836A-7BC6F32D5355",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\161b748d32_Leonardo Dicaprio (the wolf of wall street) scene pack 1080p + mega link.mp4",
+      "clip_md5": "161b748d3275d1910bfbe07e42ba36eb",
+      "in_point_us": 137470667,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "F5365B5C-D8D1-4F35-89DA-7132A6EA3D51",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\161b748d32_Leonardo Dicaprio (the wolf of wall street) scene pack 1080p + mega link.mp4",
+      "clip_md5": "161b748d3275d1910bfbe07e42ba36eb",
+      "in_point_us": 12721044,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "441EB06A-9D36-467F-9B6C-A0C7EAEE928C",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\161b748d32_Leonardo Dicaprio (the wolf of wall street) scene pack 1080p + mega link.mp4",
+      "clip_md5": "161b748d3275d1910bfbe07e42ba36eb",
+      "in_point_us": 50258544,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "B1D5BF03-EC17-4309-95BC-5BED6CB147B0",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\161b748d32_Leonardo Dicaprio (the wolf of wall street) scene pack 1080p + mega link.mp4",
+      "clip_md5": "161b748d3275d1910bfbe07e42ba36eb",
+      "in_point_us": 139889744,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "74127192-C69E-4C47-AA63-0E8644681890",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\161b748d32_Leonardo Dicaprio (the wolf of wall street) scene pack 1080p + mega link.mp4",
+      "clip_md5": "161b748d3275d1910bfbe07e42ba36eb",
+      "in_point_us": 28945578,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "83302A5A-510E-4E22-BBAF-CE2F5C26DC7B",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\161b748d32_Leonardo Dicaprio (the wolf of wall street) scene pack 1080p + mega link.mp4",
+      "clip_md5": "161b748d3275d1910bfbe07e42ba36eb",
+      "in_point_us": 117909456,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "6C6E2FB2-9F67-42FC-BE8C-8848007E6369",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\161b748d32_Leonardo Dicaprio (the wolf of wall street) scene pack 1080p + mega link.mp4",
+      "clip_md5": "161b748d3275d1910bfbe07e42ba36eb",
+      "in_point_us": 134342544,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "63B7E4B9-5747-47B4-A9C3-3CF88F8CC4C8",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 198823622,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "37BDEF5D-2895-4ED1-8B5C-1B9649280A1E",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 220720500,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "6E8C98CD-986B-460C-9949-B711E6D3E575",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 8717044,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "B04C19E0-6FBE-432D-AD28-EC5236DEB988",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 75742333,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "975DA084-EAB4-478F-AA28-270CA417C2C2",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 23231544,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "7A9EB9C6-BA41-42CF-8A1C-540E90D78928",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 231898333,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "0DF323CC-8F32-428A-8554-B4CDF512C03D",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 205205000,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "D4856277-2DA9-4D0B-B77E-19D0A4711655",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 56222833,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "677BD556-DBF6-4315-AED3-E481AA950207",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 142308833,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "681F173E-5481-49E0-9905-68E0B622F62F",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 236152578,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "ACBC6713-173B-4821-ACA2-0AEE239B22DC",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 150233411,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "FD005C79-84F7-406D-870D-BE4F2583726C",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\dad2347d03_Andrew Garfield scene pack 4k + mega link (Hacksaw Ridge).mp4",
+      "clip_md5": "dad2347d033b478c47ef8791e80fb8c5",
+      "in_point_us": 145270122,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "4237252F-22C8-40B8-8149-95DC8DE2A92F",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "003DF178-75A2-43F8-8DF8-B6840187AA39",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "0468D9B7-C717-4BA7-9100-C9AF54C4E16F",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "DC14623A-F512-4D3E-8179-EA4DC106F430",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "00B3D075-0FB0-4AFD-9B92-9CC7ECAB866E",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "B553CE10-8137-4D24-AF06-B34BFDCFA221",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "74E1BBAE-162C-4B9B-A35E-DF236ADD4D17",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "1E431931-B50E-4BC3-B787-E258FFD3554D",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "EBFB4C45-3D5B-4CD1-BBBC-50DEBECD30C3",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "0590D5B3-9067-46F5-8A96-FFA7B867EB27",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "F96DB529-DE86-42B9-A661-4D70614DDEDA",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "EF826F4E-96F1-47BB-9F87-346A09F33AF6",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "D5C1CDDA-E563-466E-9D48-54F7F7703253",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "CAFBCD79-B350-4EAF-A631-7756C88CD3AA",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "E9979371-2A2A-436D-8BF3-96264BC85318",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "D9555A31-DFCE-4545-B97C-4A88B436103F",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "5E34B94F-BACB-4881-A593-DE8A08F4E765",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "E90A1A12-9522-4F04-8C70-4168F8DE09FB",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "DDF20A09-F67A-4903-878E-5B4440738029",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "1B0D9530-2A45-48BB-9663-E6DE3B0937CA",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "E8852476-FC24-441A-BE40-D91128478EC9",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "D166DE79-71A2-48E7-993D-5D5E40DD9B31",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "B2F1D88B-093C-4234-AB31-7C565AAC685E",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "3B3CC371-DE55-4CCC-B9F1-A4B0B64F8209",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "093B100E-4A14-4E2F-A4D3-12BA49FB9066",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566666
+    },
+    {
+      "slot_id": "6D6811C3-9BB7-49ED-A4CC-AB2A61B8E882",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 566667
+    },
+    {
+      "slot_id": "4012BBDF-BA5B-47DF-95F7-DDE7B9C0DED2",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "5E07D7B3-86AD-45EE-92D0-2251CED6FA8A",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\46b87911a3_black_placeholder.mp4",
+      "clip_md5": "46b87911a3a2f736b89595a7d9191b53",
+      "in_point_us": 0,
+      "source_duration_us": 61300000
+    },
+    {
+      "slot_id": "9852622F-2301-4227-9B62-03389BAFBA5E",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 120662211,
+      "source_duration_us": 1266666
+    },
+    {
+      "slot_id": "A160A020-68CA-48C4-A1DE-95DACFA0C669",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 73114711,
+      "source_duration_us": 600000
+    },
+    {
+      "slot_id": "1B5A36AD-2D71-4227-944D-53F5FEFAA062",
+      "clip_path": "C:\\Users\\jaspe\\capcut\\staging\\7f3bda5eab_Scott Hatteberg Hits the Historic Winning Homerun   MONEYBALL.mp4",
+      "clip_md5": "7f3bda5eab35358419aba39a6908bace",
+      "in_point_us": 248331411,
+      "source_duration_us": 600000
+    }
+  ]
+}

@@ -61,6 +61,7 @@ class ResolvedMedia:
     clip_md5: str
     in_point_us: int
     source_duration_us: int
+    kind: str = "video"  # "image" fills a photo slot: no trim, no duration from ffprobe
 
 
 def validate_plan(plan: Plan, manifest: Manifest, index: FootageIndex) -> tuple[list[str], list[ResolvedMedia]]:
@@ -112,11 +113,30 @@ def validate_plan_full(plan: Plan, manifest: Manifest, index: FootageIndex) -> t
         if scene is None:
             errors.append(f"media slot {m.slot_id}: clip {m.clip_id} has no scene {m.scene_id}")
             continue
+        is_photo_slot = slot.material_type == "photo"
+        if is_photo_slot and clip.kind != "image":
+            errors.append(f"media slot {m.slot_id}: photo slot (template showed a still image) needs an image clip, "
+                          f"not video {m.clip_id}; make one with `capcut-recreate titlecard` or index a poster")
+            continue
+        if not is_photo_slot and clip.kind == "image":
+            errors.append(f"media slot {m.slot_id}: video slot cannot take image clip {m.clip_id}")
+            continue
+        if clip.kind == "image":
+            resolved.append(ResolvedMedia(m.slot_id, clip.path, clip.md5, 0, slot.source_duration_us, kind="image"))
+            continue
         need = scene.start_us + slot.source_duration_us + slot.transition_pad_us
         if need > clip.duration_us:
             errors.append(
                 f"media slot {m.slot_id}: needs {need / 1e6:.2f}s from scene {m.scene_id} start "
                 f"({scene.start_us / 1e6:.2f}s) but clip {m.clip_id} is {clip.duration_us / 1e6:.2f}s")
+            continue
+        if need > scene.end_us:
+            # One slot, one shot. Crossing a detected cut adds a cut the template never had,
+            # off the beat the template's own cuts sit on.
+            errors.append(
+                f"media slot {m.slot_id}: needs {need / 1e6:.2f}s but scene {m.scene_id} of clip {m.clip_id} "
+                f"ends at {scene.end_us / 1e6:.2f}s; the slot would cross a shot cut. Pick a scene at least "
+                f"{(slot.source_duration_us + slot.transition_pad_us) / 1e6:.2f}s long")
             continue
         if slot.full_frame and clip.width and clip.height:
             cw, ch = manifest.canvas.get("width"), manifest.canvas.get("height")

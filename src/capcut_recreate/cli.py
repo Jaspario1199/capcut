@@ -62,6 +62,24 @@ def cmd_index(a) -> int:
     return 0
 
 
+def cmd_titlecard(a) -> int:
+    from .cards import CardError, image_size, render_title
+
+    try:
+        if a.like:
+            size = image_size(a.like)
+        else:
+            w, h = a.size.lower().split("x")
+            size = (int(w), int(h))
+        out = render_title(a.text, Path(a.out), size, font=a.font, fill=a.fill, stroke=a.stroke,
+                           stroke_width=a.stroke_width, background=a.background, uppercase=a.upper)
+    except CardError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+    print(json.dumps({"ok": True, "path": str(out.resolve()), "size": list(size)}))
+    return 0
+
+
 def _load_two(a):
     manifest = manifest_from_json(json.loads(Path(a.manifest).read_text()))
     index = index_from_json(json.loads(Path(a.footage).read_text()))
@@ -233,6 +251,16 @@ def main(argv: list[str] | None = None) -> int:
     s = sub.add_parser("index"); s.add_argument("staging"); s.add_argument("clips", nargs="+"); s.add_argument("-o", "--out")
     s.add_argument("--scene-threshold", type=float, default=27.0); s.add_argument("--no-thumbs", action="store_true")
     s.set_defaults(fn=cmd_index)
+
+    s = sub.add_parser("titlecard", help="render a PNG title card for a photo slot")
+    s.add_argument("text", help="title text; use | for a line break"); s.add_argument("-o", "--out", required=True)
+    s.add_argument("--size", default="720x960", help="WxH pixels (default 720x960)")
+    s.add_argument("--like", help="copy the size of this image (the template's own card)")
+    s.add_argument("--font", help="path to a .ttf; default: Impact/Arial Black/DejaVu Bold, whichever exists")
+    s.add_argument("--fill", default="white"); s.add_argument("--stroke", default="black")
+    s.add_argument("--stroke-width", type=int); s.add_argument("--background", default="transparent")
+    s.add_argument("--upper", action="store_true", help="uppercase the text")
+    s.set_defaults(fn=cmd_titlecard)
 
     s = sub.add_parser("plan"); s.add_argument("manifest"); s.add_argument("footage"); s.add_argument("--job", required=True)
     s.add_argument("--brief", required=True); s.add_argument("-o", "--out"); s.add_argument("--examples", type=int, default=3)
