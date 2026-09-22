@@ -78,6 +78,16 @@ Format facts learned from this build:
   `Timelines/<id>/draft_content.json` were byte-identical before and after.
 - Projects downloaded from CapCut mobile keep the mobile version stamp; the
   desktop version lives in `last_modified_platform`.
+- **Caveat found on biopics-v1 (2026-09-21):** the Phase 0 clip was the same
+  file as the template's, so it could not show that `replace-media` leaves the
+  template's `materials.videos[].unique_id` in place. The desktop app keys its
+  probe cache (`Cache/importcache3/mediainfo/<unique_id>.json`) by that value,
+  which is MD5 of the file's absolute forward-slash path; a stale value makes
+  every replaced clip sit in the loading state. `apply` now recomputes it
+  (`apply.unique_id_for`) after the last capcut-cli write, and the diff
+  allowlist admits the change on replaced materials. Online library materials
+  (`Cache/onlineMaterial`) get their path reverted by the app on save, so those
+  slots are `keep: true` in the plan.
 
 ## 6. Phase 1: template preparation (once per template)
 

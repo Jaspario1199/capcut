@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from conftest import MEDIA_SLOT_A, MEDIA_SLOT_MASK, MEDIA_SLOT_PIP, TEXT_SLOT_OK, requires_cli
 
-from capcut_recreate.apply import ApplyError, apply_plan
+from capcut_recreate.apply import ApplyError, apply_plan, unique_id_for
 from capcut_recreate.draft import load_doc
 from capcut_recreate.footage import md5_file
 from capcut_recreate.plan import Plan, validate_plan
@@ -54,6 +54,8 @@ def test_apply_roundtrip(manifest, footage_index, store, template_dir):
     mat = next(m for m in doc["materials"]["videos"] if m["id"] == a["material_id"])
     assert Path(mat["path"]).name.endswith("beach_wide.mp4") and mat["duration"] == 8_000_000
     assert md5_file(Path(mat["path"])) == footage_index.by_id()["c00"].md5
+    # CapCut keys its probe cache by unique_id; a stale template value leaves the clip loading forever
+    assert mat["unique_id"] == unique_id_for(mat["path"]) == report.unique_ids[mat["id"]]
 
     # locked slot byte-identical apart from nothing
     assert seg(doc, MEDIA_SLOT_MASK) == seg(tpl, MEDIA_SLOT_MASK)

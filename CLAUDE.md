@@ -43,6 +43,17 @@ says so.
 - CapCut must be **closed** during `apply`; the pipeline refuses otherwise.
 - CapCut 9.x stores media paths as `##_draftpath_placeholder_<id>_##/...`;
   the pipeline resolves that token. Do not rewrite those paths.
+- CapCut 9.x keys its per-file probe cache
+  (`User Data\Cache\importcache3\mediainfo\<unique_id>.json`) by the video
+  material's `unique_id` = MD5 of the absolute forward-slash path. capcut-cli's
+  `replace-media` keeps the template's value, so a replaced clip reads the old
+  file's probe and never finishes loading (striped track, black preview; this
+  was biopics-v1). `apply` now recomputes `unique_id` for every replaced video
+  material as its last write. The file format was never the problem: the
+  downloads are 1080p H.264, the same shape as the template's own footage.
+- Slots whose template media is an online library asset (the white and black
+  flash frames, path under `Cache/onlineMaterial`) must be `keep: true`; CapCut
+  reverts their path on save even when replaced.
 
 ## How to run the current job
 

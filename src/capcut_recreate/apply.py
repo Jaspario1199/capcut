@@ -7,6 +7,7 @@ Sequence (each step verified by the adversarial review against capcut-cli 0.25.0
        assert new_duration_us != null, assert staged asset md5 == source md5
   3. one capcut batch: trim per media slot (string times), set-text per text slot
   4. capcut register --materials --apply ; capcut lint --fix
+  4b. refresh material.unique_id on every replaced video material (see _refresh_unique_ids)
   5. own invariant validator
   6. own path-level diff against the template with an allowlist
   7. capcut lint for information only
@@ -18,6 +19,7 @@ because every capcut-cli write is atomic and we abort on the first error.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import shutil
@@ -51,6 +53,7 @@ class ApplyReport:
     invariant_errors: list[str] = field(default_factory=list)
     diff_violations: list[str] = field(default_factory=list)
     lint_info: dict[str, Any] | None = None
+    unique_ids: dict[str, str] = field(default_factory=dict)
     library_job_id: str | None = None
     ok: bool = False
 
@@ -190,6 +193,9 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
             raise ApplyError(f"lint --fix crashed: {fix.stderr}")
         if sync_nested:
             runner.run("sync-timelines", str(job_dir), nested=True, apply=True, force_write=fw)
+        # Last write: nothing from capcut-cli runs after this, so its changed-on-disk guard never trips.
+        report.unique_ids = _refresh_unique_ids(job_dir, [media_slots[r.slot_id].material_id for r in resolved],
+                                                nested=sync_nested)
 
         from .validate import validate_doc
         new_doc = load_doc(job_dir)
@@ -241,6 +247,52 @@ def _check_relink(template_doc: dict[str, Any], new_doc: dict[str, Any], job_dir
                 raise ApplyError(f"{m['id']}: media {path} does not resolve to a file in the job ({resolved})")
             if not is_placeholder_path(path) and not Path(path).is_absolute():
                 raise ApplyError(f"{m['id']}: path {path} is neither absolute nor a draft placeholder after relink")
+
+
+def unique_id_for(path: str) -> str:
+    """CapCut desktop's material.unique_id: MD5 of the absolute path with forward slashes.
+
+    Verified on CapCut 9.5.0 (2026-09-21): the app keys its per-file probe cache
+    (User Data/Cache/importcache3/mediainfo/<unique_id>.json) by this value.
+    """
+    return hashlib.md5(path.replace("\\", "/").encode("utf-8")).hexdigest()
+
+
+def _refresh_unique_ids(job_dir: Path, material_ids: list[str], nested: bool = False) -> dict[str, str]:
+    """Recompute unique_id for replaced video materials.
+
+    replace-media keeps the template's unique_id, so CapCut reads the template
+    file's cached probe (duration, dimensions, stream layout) for the new file
+    and the clip never finishes loading: striped track, black preview. Seen on
+    biopics-v1, every replaced slot; the same-file phase-0 test could not show it.
+    """
+    docs = [find_doc(job_dir)]
+    if nested:
+        proj = job_dir / "Timelines" / "project.json"
+        if proj.exists():
+            main_id = json.loads(proj.read_text()).get("main_timeline_id")
+            for name in ("draft_content.json", "draft_info.json"):
+                inner = job_dir / "Timelines" / str(main_id) / name
+                if main_id and inner.exists():
+                    docs.append(inner)
+    wanted = set(material_ids)
+    out: dict[str, str] = {}
+    for doc_path in docs:
+        doc = json.loads(doc_path.read_bytes())
+        changed = False
+        for m in doc["materials"].get("videos", []):
+            if m.get("id") in wanted and m.get("path"):
+                uid = unique_id_for(m["path"])
+                if m.get("unique_id") != uid:
+                    m["unique_id"] = uid
+                    changed = True
+                out[m["id"]] = uid
+        if changed:
+            doc_path.write_bytes(json.dumps(doc, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+    missing = wanted - set(out)
+    if missing:
+        raise ApplyError(f"unique_id refresh: replaced materials not found in document: {sorted(missing)}")
+    return out
 
 
 def _drop_root_entry(store: Path, job_dir: str) -> None:
