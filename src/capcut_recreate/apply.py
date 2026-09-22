@@ -29,12 +29,14 @@ from typing import Any
 
 from . import runner
 from .diffing import apply_allowlist, diff
-from .draft import US, find_doc, is_placeholder_path, iter_segments, load_doc, resolve_media_path
+from .draft import US, find_doc, is_placeholder_path, iter_segments, load_doc, resolve_media_path, external_media_ids
 from .footage import md5_file
 from .library import Library
 from .manifest import Manifest
 from .plan import Plan, ResolvedMedia
 
+LINT_NO_CAP_SECS = 100_000
+LINT_NO_CAP_CHARS = 100_000
 KNOWN_WARNING = re.compile(r"^New clip is [\d.]+s but the segment uses up to [\d.]+s of source")
 
 
@@ -187,7 +189,11 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
         # capcut-cli refuses index writes while the app runs; only scratch stores pass force_write.
         report.register = runner.run("register", str(job_dir), apply=True, materials=True, drafts=str(store),
                                      force_write=fw)
-        fix = runner.run_raw("lint", str(doc_path), fix=True, force_write=fw)
+        # lint --fix is run for its media-outside-draft staging and draft_materials linking only.
+        # Its caption rules would otherwise shorten or re-wrap template text (the 0805 titles run
+        # 14 s and lint capped them at 7 s), so push those thresholds out of reach.
+        fix = runner.run_raw("lint", str(doc_path), fix=True, force_write=fw,
+                             max_cue_secs=LINT_NO_CAP_SECS, max_chars=LINT_NO_CAP_CHARS, min_gap_ms=0)
         report.lint_fix = fix.data
         if fix.status not in (0, 1, 2):
             raise ApplyError(f"lint --fix crashed: {fix.stderr}")
@@ -197,15 +203,20 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
         report.unique_ids = _refresh_unique_ids(job_dir, [media_slots[r.slot_id].material_id for r in resolved],
                                                 nested=sync_nested)
 
-        from .validate import validate_doc
+        from .validate import new_invariant_errors
         new_doc = load_doc(job_dir)
-        report.invariant_errors = validate_doc(new_doc)
+        report.invariant_errors = new_invariant_errors(template_doc, new_doc)
 
         seg_track = {ref.id: ref.track_id for ref in iter_segments(template_doc)}
         replaced_mats = [media_slots[r.slot_id].material_id for r in resolved]
         text_mats = [manifest.text_by_id()[t.slot_id].material_id for t in plan.text]
+        # lint --fix stages media that lives outside the template (CapCut's online-material and
+        # music caches) into assets/ and renames the material after the file; CapCut restores the
+        # cache path on save. Allow that bookkeeping on exactly those materials.
+        external = external_media_ids(template_doc, template_dir)
+        extra = [rf"^materials\.(videos|audios)\[{re.escape(mid)}\]\.(name|material_name)$" for mid in external]
         allow = apply_allowlist([r.slot_id for r in resolved], [t.slot_id for t in plan.text],
-                                replaced_mats, text_mats, seg_track)
+                                replaced_mats, text_mats, seg_track, extra=extra)
         d = diff(template_doc, new_doc)
         report.diff_violations = [str(c) for c in d.filtered(allow)]
 

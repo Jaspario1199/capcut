@@ -13,6 +13,17 @@ from typing import Any
 from .draft import frame_us, iter_segments, load_doc, material_index, parse_text_content, utf16_len
 
 
+def new_invariant_errors(template_doc: dict[str, Any], new_doc: dict[str, Any]) -> list[str]:
+    """Errors in the written draft that the template did not already have.
+
+    A template can carry its own oddities on locked slots (the 0805 template
+    has an audio segment whose volume keyframes sit past its end); apply must
+    not be blamed for what it copied verbatim.
+    """
+    pre = set(validate_doc(template_doc))
+    return [e for e in validate_doc(new_doc) if e not in pre]
+
+
 def validate_doc(doc: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     mats = material_index(doc)

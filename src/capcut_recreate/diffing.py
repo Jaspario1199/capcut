@@ -100,7 +100,8 @@ def apply_allowlist(manifest_media_ids: list[str], manifest_text_ids: list[str],
         allow += [rf"^materials\.videos\[{m}\]\.(path|material_name|name|duration|width|height|local_material_id|unique_id)$",
                   rf"^materials\.audios\[{m}\]\.(path|name|duration|local_material_id)$"]
     for mid in text_material_ids:
-        allow.append(rf"^materials\.texts\[{re.escape(mid)}\]\.content$")
+        # set-text writes the plain text into recognize_text as well as the styled content
+        allow.append(rf"^materials\.texts\[{re.escape(mid)}\]\.(content|recognize_text)$")
     for sid in manifest_media_ids:
         t = re.escape(seg_track[sid])
         s = re.escape(sid)
