@@ -12,6 +12,7 @@ Slots produced:
   seg cccccc01  text, single style                                              -> replaceable
   seg cccccc02  text, two style ranges                                          -> locked (multi-style)
   seg cccccc03  text, legacy non-JSON content                                   -> locked (unparseable)
+  seg eeeeee01  photo (still image) on its own track, 3s-5s                     -> replaceable, images only
 """
 
 from __future__ import annotations
@@ -99,9 +100,35 @@ def main() -> None:
     t2["styles"] = [base, hi]
     texts["mat-text-02"]["content"] = json.dumps(t2, separators=(",", ":"))
 
+    add_photo_slot(d)
     d["duration"] = 10 * US
     DOC.write_text(json.dumps(d, indent=2, ensure_ascii=False) + "\n")
     print("wrote", DOC)
+
+
+PHOTO_SEG = "eeeeee01-0000-0000-0000-000000000001"
+
+
+def add_photo_slot(d: dict) -> bool:
+    """Idempotent: a photo material + segment like the ones mobile templates carry for title art."""
+    mats = d["materials"]
+    if any(m["id"] == "mat-photo-01" for m in mats["videos"]):
+        return False
+    mats["videos"].append({
+        "id": "mat-photo-01", "type": "photo", "path": "assets/image/title.png", "material_name": "title.png",
+        "duration": 10_800_000_000, "width": 320, "height": 240, "has_audio": False,
+    })
+    seg = {
+        "id": PHOTO_SEG, "material_id": "mat-photo-01", "extra_material_refs": [],
+        "target_timerange": {"start": 3 * US, "duration": 2 * US}, "source_timerange": {"start": 0, "duration": 2 * US},
+        "speed": 1.0, "volume": 1.0, "visible": True, "render_index": 2, "track_render_index": 2,
+        "clip": {"alpha": 1, "rotation": 0, "scale": {"x": 0.5, "y": 0.5}, "transform": {"x": 0.0, "y": 0.3},
+                 "flip": {"horizontal": False, "vertical": False}},
+        "common_keyframes": [], "keyframe_refs": [],
+    }
+    d["tracks"].insert(2, {"id": "track-video-03", "type": "video", "name": "Title art", "is_default_name": False,
+                           "attribute": 0, "flag": 0, "segments": [seg]})
+    return True
 
 
 if __name__ == "__main__":

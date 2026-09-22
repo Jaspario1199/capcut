@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 
 import pytest
-from conftest import MEDIA_SLOT_A, MEDIA_SLOT_MASK, MEDIA_SLOT_PIP, TEXT_SLOT_OK, requires_cli
+from conftest import MEDIA_SLOT_A, MEDIA_SLOT_MASK, MEDIA_SLOT_PHOTO, MEDIA_SLOT_PIP, TEXT_SLOT_OK, requires_cli
 
 from capcut_recreate.apply import ApplyError, apply_plan, unique_id_for
 from capcut_recreate.draft import load_doc
@@ -15,11 +15,14 @@ from capcut_recreate.plan import Plan, validate_plan
 pytestmark = requires_cli
 
 
-def plan(job="job", clip_a="c00", clip_pip="c02", scene="s0"):
+def plan(job="job", clip_a="c00", clip_pip="c02", scene="s0", photo="c03"):
+    photo_entry = ({"slot_id": MEDIA_SLOT_PHOTO, "clip_id": photo, "scene_id": "s0"} if photo
+                   else {"slot_id": MEDIA_SLOT_PHOTO, "clip_id": "", "scene_id": "", "keep": True})
     return Plan.from_json({
         "job_name": job,
         "media": [{"slot_id": MEDIA_SLOT_A, "clip_id": clip_a, "scene_id": scene},
-                  {"slot_id": MEDIA_SLOT_PIP, "clip_id": clip_pip, "scene_id": scene}],
+                  {"slot_id": MEDIA_SLOT_PIP, "clip_id": clip_pip, "scene_id": scene},
+                  photo_entry],
         "text": [{"slot_id": TEXT_SLOT_OK, "new_text": "Welcome back"}],
     })
 
@@ -57,6 +60,14 @@ def test_apply_roundtrip(manifest, footage_index, store, template_dir):
     # CapCut keys its probe cache by unique_id; a stale template value leaves the clip loading forever
     assert mat["unique_id"] == unique_id_for(mat["path"]) == report.unique_ids[mat["id"]]
 
+    # photo slot: new image, nominal photo duration untouched, placement untouched, no trim op
+    ph = seg(doc, MEDIA_SLOT_PHOTO)
+    assert ph["target_timerange"] == seg(tpl, MEDIA_SLOT_PHOTO)["target_timerange"]
+    assert ph["source_timerange"] == seg(tpl, MEDIA_SLOT_PHOTO)["source_timerange"]
+    pmat = next(m for m in doc["materials"]["videos"] if m["id"] == ph["material_id"])
+    assert pmat["path"].endswith("poster.png") and pmat["duration"] == 10_800_000_000 and pmat["type"] == "photo"
+    assert pmat["unique_id"] == unique_id_for(pmat["path"])
+
     # locked slot byte-identical apart from nothing
     assert seg(doc, MEDIA_SLOT_MASK) == seg(tpl, MEDIA_SLOT_MASK)
 
@@ -91,7 +102,7 @@ def test_basename_collision_is_safe(manifest, footage_index, store, template_dir
     shutil.copyfile(next(c.path for c in footage_index.clips if c.original_name == "other_short2s.mp4"), src_b)
     idx = stage_footage([src_a, src_b], tmp_path / "stage2")
     assert len({c.md5 for c in idx.clips}) == 2
-    p = plan(job="collide", clip_a=idx.clips[0].clip_id, clip_pip=idx.clips[1].clip_id)
+    p = plan(job="collide", clip_a=idx.clips[0].clip_id, clip_pip=idx.clips[1].clip_id, photo=None)
     errors, resolved = validate_plan(p, manifest, idx)
     assert errors == []
     report = apply_plan(p, manifest, resolved, store, template_dir=template_dir, force_write=True)

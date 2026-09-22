@@ -13,6 +13,7 @@ FOOTAGE = FIXTURES / "footage"
 MEDIA_SLOT_A = "aaaaaa01-0000-0000-0000-000000000001"  # speed 1.5, keyframes, transition -> replaceable
 MEDIA_SLOT_MASK = "aaaaaa02-0000-0000-0000-000000000002"  # mask -> locked
 MEDIA_SLOT_PIP = "dddddd01-0000-0000-0000-000000000001"  # PIP -> replaceable
+MEDIA_SLOT_PHOTO = "eeeeee01-0000-0000-0000-000000000001"  # still image -> replaceable, images only
 TEXT_SLOT_OK = "cccccc01-0000-0000-0000-000000000001"
 TEXT_SLOT_MULTI = "cccccc02-0000-0000-0000-000000000002"
 TEXT_SLOT_LEGACY = "cccccc03-0000-0000-0000-000000000003"
@@ -44,7 +45,8 @@ def manifest():
 @pytest.fixture
 def footage_index(tmp_path):
     from capcut_recreate.footage import stage_footage
-    return stage_footage(sorted(FOOTAGE.glob("*.mp4")), tmp_path / "stage")
+    # sorted by name: beach_wide (c00), city_night (c01), other_short2s (c02), poster.png (c03, image)
+    return stage_footage(sorted(FOOTAGE.glob("*.mp4")) + sorted(FOOTAGE.glob("*.png")), tmp_path / "stage")
 
 
 @pytest.fixture

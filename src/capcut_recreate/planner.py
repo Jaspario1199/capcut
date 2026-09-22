@@ -63,7 +63,8 @@ The template's timeline is fixed: every slot keeps its position, duration, speed
 Rules the validator enforces, so obey them or the plan is rejected:
 - Fill every replaceable media slot exactly once. Never reference a locked slot.
 - A media entry is either {"slot_id", "clip_id", "scene_id", "keep": false} or {"slot_id", "clip_id": "", "scene_id": "", "keep": true}. Use keep for slots whose template media is structural rather than content: full-length background plates, flash frames, solid-colour overlays, anything whose thumbnail is a plain colour or a texture. Keeping is always valid; forcing footage into a structural layer is not.
-- scene start + slot source duration + transition pad must fit inside the clip. Prefer scenes with room to spare.
+- scene start + slot source duration + transition pad must fit inside the chosen scene, not just the clip: one slot, one shot. A slot that crosses a detected cut is rejected, because it would add a cut the template never had, off the beat. Prefer scenes with room to spare.
+- A slot with media_type "photo" showed a still image in the template (a poster, a title card, a logo). It takes an image clip only (kind "image"), never video. If no fitting image is indexed, ask the operator for one or make a title card with `capcut-recreate titlecard`.
 - Full-frame slots need a clip whose orientation matches the canvas.
 - Text must stay within max_chars for its slot.
 - Keep the meaning and rhythm of the original text: a hook stays a hook, a caption stays a caption.
@@ -78,6 +79,8 @@ def _compact_manifest(m: Manifest) -> dict[str, Any]:
     for s in m.media:
         media.append({
             "slot_id": s.slot_id, "status": s.status, "lock_reasons": s.lock_reasons, "track": s.track_name,
+            "media_type": s.material_type,
+            "template_media_size": f"{s.material_width}x{s.material_height}" if s.material_width else None,
             "at_s": round(s.target_start_us / 1e6, 2), "duration_s": round(s.target_duration_us / 1e6, 2),
             "source_needed_s": round((s.source_duration_us + s.transition_pad_us) / 1e6, 2), "speed": s.speed,
             "full_frame": s.full_frame, "scale": s.scale, "position": s.transform, "volume": s.volume,
@@ -94,7 +97,8 @@ def _compact_manifest(m: Manifest) -> dict[str, Any]:
 
 def _compact_index(idx: FootageIndex) -> dict[str, Any]:
     return {"clips": [{
-        "clip_id": c.clip_id, "name": c.original_name, "duration_s": round(c.duration_us / 1e6, 2),
+        "clip_id": c.clip_id, "name": c.original_name, "kind": getattr(c, "kind", "video"),
+        "duration_s": None if getattr(c, "kind", "video") == "image" else round(c.duration_us / 1e6, 2),
         "size": f"{c.width}x{c.height}", "has_audio": c.has_audio,
         "scenes": [{"scene_id": s.scene_id, "start_s": round(s.start_us / 1e6, 2), "end_s": round(s.end_us / 1e6, 2),
                     "thumbnail": getattr(s, "thumbnail", None)} for s in c.scenes],

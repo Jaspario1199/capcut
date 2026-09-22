@@ -89,6 +89,16 @@ Format facts learned from this build:
   (`Cache/onlineMaterial`) get their path reverted by the app on save, so those
   slots are `keep: true` in the plan.
 
+- **Photo slots (2026-09-22):** mobile templates carry per-entry title or
+  poster art as `type: "photo"` materials (nominal 3 h duration). capcut-cli's
+  `replace-media` handles them (no probe duration, so it leaves the duration
+  alone and updates width/height). The pipeline indexes png/jpg as
+  `kind: "image"` clips, lets only images into photo slots, skips the trim op
+  for them, and ships `titlecard` (Pillow) to render a card when no art exists.
+- **One slot, one shot (2026-09-22):** `check` rejects a scene choice whose
+  source range runs past the detected scene's end. Crossing a cut adds a cut
+  the template never had, off the template's beat.
+
 ## 6. Phase 1: template preparation (once per template)
 
 1. **Preflight.** Run `capcut diagnose`. With custom code, compare the hash of the root timeline document against `Timelines/<main_timeline_id>/draft_info.json` when that exists. Abort on mismatch, since `init --template` clones the root document and a stale root means cloning something other than what the editor shows. A binary `template-2.tmp` is expected on 8.7+ and is not drift.

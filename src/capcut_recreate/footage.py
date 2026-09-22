@@ -44,7 +44,18 @@ class Clip:
     height: int
     has_audio: bool
     vfr: bool
+    # "video" or "image". Images fill photo slots only; CapCut gives a photo
+    # material a nominal 3 h duration, so any slot length fits.
+    kind: str = "video"
     scenes: list[Scene] = field(default_factory=list)
+
+
+IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
+PHOTO_DURATION_US = 10_800_000_000  # what CapCut writes as materials.videos[].duration for a photo
+
+
+def is_image(path: Path) -> bool:
+    return Path(path).suffix.lower() in IMAGE_EXTS
 
 
 @dataclass
@@ -88,6 +99,13 @@ def probe_clip(path: Path, clip_id: str, ffprobe_cmd: str = "ffprobe") -> Clip:
     v = next((s for s in info.get("streams", []) if s.get("codec_type") == "video"), None)
     if v is None:
         raise FootageError(f"{path}: no video stream")
+    if is_image(path):
+        w, h = int(v.get("width", 0)), int(v.get("height", 0))
+        if not w or not h:
+            raise FootageError(f"{path}: ffprobe reports no image dimensions")
+        return Clip(clip_id=clip_id, path=str(path), original_name=path.name, md5=md5_file(path),
+                    duration_us=PHOTO_DURATION_US, fps=0.0, width=w, height=h, has_audio=False, vfr=False,
+                    kind="image")
     a = any(s.get("codec_type") == "audio" for s in info.get("streams", []))
     dur = float(info.get("format", {}).get("duration") or v.get("duration") or 0)
     r = _fraction(v.get("r_frame_rate"))
@@ -147,6 +165,21 @@ def stage_footage(sources: list[Path], staging_dir: Path, ffprobe_cmd: str = "ff
         if clip.vfr:
             raise FootageError(f"{src}: variable frame rate; transcode to CFR first")
         clip.original_name = src.name
+        if clip.kind == "image":
+            # one scene, the whole picture; its thumbnail is a small copy of itself
+            clip.scenes = [Scene("s0", 0, PHOTO_DURATION_US)]
+            if thumbnails and ffmpeg_available():
+                out = thumbs_dir / thumb_name(f"{clip_id}_s0", 0)
+                try:
+                    if not out.exists():
+                        extract_frame(dest, 0, out)
+                    clip.scenes[0].thumbnail = str(out)
+                except ThumbError:
+                    clip.scenes[0].thumbnail = str(dest)
+            else:
+                clip.scenes[0].thumbnail = str(dest)
+            clips.append(clip)
+            continue
         clip.scenes = detect_scenes(dest, clip.duration_us, scene_threshold)
         if thumbnails and ffmpeg_available():
             for sc in clip.scenes:

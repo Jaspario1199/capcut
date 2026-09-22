@@ -4,7 +4,7 @@ from capcut_recreate.manifest import Manifest, manifest_from_json
 
 
 def test_counts(manifest: Manifest):
-    assert manifest.counts() == {"media_replaceable": 2, "media_locked": 1, "text_replaceable": 1, "text_locked": 2}
+    assert manifest.counts() == {"media_replaceable": 3, "media_locked": 1, "text_replaceable": 1, "text_locked": 2}
 
 
 def test_speed_slot_carries_timing_and_keyframes(manifest: Manifest):

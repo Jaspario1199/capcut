@@ -155,7 +155,7 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
         # paths lint and the app resolve against the wrong base. Relink every
         # material to the clone's own assets/ so the job is self-contained.
         runner.run("relink", str(doc_path), **{"from": str(template_dir), "to": str(job_dir)}, force_write=fw)
-        for kind in ("video", "audio"):
+        for kind in ("video", "audio", "image"):
             adir = job_dir / "assets" / kind
             if adir.is_dir():
                 runner.run("relink", str(doc_path), dir=str(adir), force_write=fw)
@@ -164,7 +164,9 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
         media_slots = manifest.media_by_id()
         for r in resolved:
             res = runner.run("replace-media", str(doc_path), r.slot_id, r.clip_path, force_write=fw)
-            if res.get("new_duration_us") in (None, 0):
+            # A still has no duration; replace-media then leaves the photo material's nominal
+            # 3 h duration alone, which is what CapCut wants. Videos must probe.
+            if r.kind != "image" and res.get("new_duration_us") in (None, 0):
                 raise ApplyError(f"{r.slot_id}: replace-media returned no duration (ffprobe?)")
             new_path = Path(res["new_path"])
             if not new_path.is_absolute():
@@ -178,6 +180,8 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
 
         ops = []
         for r in resolved:
+            if r.kind == "image":
+                continue  # a photo segment's source range is not an in-point into a file
             ops.append({"cmd": "trim", "id": r.slot_id, "start": _us_to_s(r.in_point_us),
                         "duration": _us_to_s(r.source_duration_us)})
         for t in plan.text:

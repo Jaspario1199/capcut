@@ -6,7 +6,7 @@ import types
 from pathlib import Path
 
 import pytest
-from conftest import FOOTAGE, MEDIA_SLOT_A, MEDIA_SLOT_PIP, TEMPLATE, TEXT_SLOT_OK, requires_cli
+from conftest import MEDIA_SLOT_PHOTO, FOOTAGE, MEDIA_SLOT_A, MEDIA_SLOT_PIP, TEMPLATE, TEXT_SLOT_OK, requires_cli
 
 from capcut_recreate.corrections import capture
 from capcut_recreate.footage import stage_footage
@@ -18,7 +18,8 @@ from capcut_recreate.planner import PLAN_SCHEMA, build_messages, plan_with_claud
 GOOD_PLAN = {
     "job_name": "job",
     "media": [{"slot_id": MEDIA_SLOT_A, "clip_id": "c00", "scene_id": "s0"},
-              {"slot_id": MEDIA_SLOT_PIP, "clip_id": "c02", "scene_id": "s0"}],
+              {"slot_id": MEDIA_SLOT_PIP, "clip_id": "c02", "scene_id": "s0"},
+              {"slot_id": MEDIA_SLOT_PHOTO, "clip_id": "c03", "scene_id": "s0"}],
     "text": [{"slot_id": TEXT_SLOT_OK, "new_text": "Welcome back"}],
 }
 
@@ -244,22 +245,26 @@ def test_chunking_and_merge(manifest, footage_index):
     from capcut_recreate.planner import chunk_manifest, merge_plans
 
     chunks = chunk_manifest(manifest, max_media=1)
-    assert len(chunks) == 2  # two replaceable media slots at 0s and 7s
+    assert len(chunks) == 3  # replaceable media slots at 0s, 3s (photo) and 7s
     all_media = sorted(s.slot_id for c in chunks for s in c.media)
     all_text = sorted(s.slot_id for c in chunks for s in c.text)
     assert all_media == sorted(s.slot_id for s in manifest.media)
     assert all_text == sorted(s.slot_id for s in manifest.text)
-    assert chunks[0].media_by_id()[MEDIA_SLOT_A] and chunks[1].media_by_id()[MEDIA_SLOT_PIP]
-    # locked mask slot at 5s rides with the first window (0s..7s)
+    assert chunks[0].media_by_id()[MEDIA_SLOT_A] and chunks[2].media_by_id()[MEDIA_SLOT_PIP]
+    assert chunks[1].media_by_id()[MEDIA_SLOT_PHOTO]
+    # locked mask slot at 5s rides with the window that starts at 3s
     from conftest import MEDIA_SLOT_MASK
-    assert MEDIA_SLOT_MASK in chunks[0].media_by_id()
+    assert MEDIA_SLOT_MASK in chunks[1].media_by_id()
 
     p0 = Plan.from_json({"job_name": "j", "media": [{"slot_id": MEDIA_SLOT_A, "clip_id": "c00", "scene_id": "s0"}],
                          "text": [{"slot_id": TEXT_SLOT_OK, "new_text": "Hi there"}]})
+    pp = Plan.from_json({"job_name": "j", "media": [{"slot_id": MEDIA_SLOT_PHOTO, "clip_id": "c03", "scene_id": "s0"}],
+                         "text": []})
     p1 = Plan.from_json({"job_name": "j", "media": [{"slot_id": MEDIA_SLOT_PIP, "clip_id": "c02", "scene_id": "s0"}],
                          "text": []})
     assert validate_plan(p0, chunks[0], footage_index)[0] == []
-    assert validate_plan(p1, chunks[1], footage_index)[0] == []
-    merged = merge_plans([p0, p1], "j")
+    assert validate_plan(pp, chunks[1], footage_index)[0] == []
+    assert validate_plan(p1, chunks[2], footage_index)[0] == []
+    merged = merge_plans([p0, pp, p1], "j")
     assert validate_plan(merged, manifest, footage_index)[0] == []
-    assert len(merged.media) == 2 and len(merged.text) == 1
+    assert len(merged.media) == 3 and len(merged.text) == 1
