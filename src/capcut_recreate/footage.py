@@ -32,6 +32,13 @@ class Scene:
     thumbnail: str | None = None
 
 
+IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
+
+
+def is_image(path: Path) -> bool:
+    return Path(path).suffix.lower() in IMAGE_SUFFIXES
+
+
 @dataclass
 class Clip:
     clip_id: str
@@ -45,6 +52,7 @@ class Clip:
     has_audio: bool
     vfr: bool
     scenes: list[Scene] = field(default_factory=list)
+    kind: str = "video"  # "video" or "image"; images fill photo slots (title cards, stills)
 
 
 @dataclass
@@ -89,6 +97,11 @@ def probe_clip(path: Path, clip_id: str, ffprobe_cmd: str = "ffprobe") -> Clip:
     if v is None:
         raise FootageError(f"{path}: no video stream")
     a = any(s.get("codec_type") == "audio" for s in info.get("streams", []))
+    if is_image(path):
+        # A still has no duration; CapCut gives photo materials a fixed 3 h span and the slot keeps its own length.
+        return Clip(clip_id=clip_id, path=str(path), original_name=path.name, md5=md5_file(path), duration_us=0,
+                    fps=0.0, width=int(v.get("width", 0)), height=int(v.get("height", 0)), has_audio=False,
+                    vfr=False, kind="image")
     dur = float(info.get("format", {}).get("duration") or v.get("duration") or 0)
     r = _fraction(v.get("r_frame_rate"))
     avg = _fraction(v.get("avg_frame_rate"))
@@ -147,7 +160,7 @@ def stage_footage(sources: list[Path], staging_dir: Path, ffprobe_cmd: str = "ff
         if clip.vfr:
             raise FootageError(f"{src}: variable frame rate; transcode to CFR first")
         clip.original_name = src.name
-        clip.scenes = detect_scenes(dest, clip.duration_us, scene_threshold)
+        clip.scenes = [Scene("s0", 0, 0)] if clip.kind == "image" else detect_scenes(dest, clip.duration_us, scene_threshold)
         if thumbnails and ffmpeg_available():
             for sc in clip.scenes:
                 out = thumbs_dir / thumb_name(f"{clip_id}_{sc.scene_id}", sc.start_us)

@@ -112,8 +112,16 @@ def validate_plan_full(plan: Plan, manifest: Manifest, index: FootageIndex) -> t
         if scene is None:
             errors.append(f"media slot {m.slot_id}: clip {m.clip_id} has no scene {m.scene_id}")
             continue
+        is_photo_slot = slot.material_type == "photo"
+        if is_photo_slot and clip.kind != "image":
+            errors.append(f"media slot {m.slot_id}: photo slot (a still such as a title card) needs an image clip, "
+                          f"not video {m.clip_id}; use keep: true to leave the template still in place")
+            continue
+        if not is_photo_slot and clip.kind == "image":
+            errors.append(f"media slot {m.slot_id}: video slot cannot take image clip {m.clip_id}")
+            continue
         need = scene.start_us + slot.source_duration_us + slot.transition_pad_us
-        if need > clip.duration_us:
+        if not is_photo_slot and need > clip.duration_us:
             errors.append(
                 f"media slot {m.slot_id}: needs {need / 1e6:.2f}s from scene {m.scene_id} start "
                 f"({scene.start_us / 1e6:.2f}s) but clip {m.clip_id} is {clip.duration_us / 1e6:.2f}s")

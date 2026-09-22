@@ -164,7 +164,8 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
         media_slots = manifest.media_by_id()
         for r in resolved:
             res = runner.run("replace-media", str(doc_path), r.slot_id, r.clip_path, force_write=fw)
-            if res.get("new_duration_us") in (None, 0):
+            is_photo = media_slots[r.slot_id].material_type == "photo"
+            if res.get("new_duration_us") in (None, 0) and not is_photo:
                 raise ApplyError(f"{r.slot_id}: replace-media returned no duration (ffprobe?)")
             new_path = Path(res["new_path"])
             if not new_path.is_absolute():
