@@ -32,7 +32,14 @@ replaceable text slot should say. Deterministic code (this repo, on top of
 - Jobs so far: `biopics-v1` (clips never loaded: stale `unique_id`, fixed),
   `biopics-v2` (clips load; its eight photo slots got a black placeholder
   video, which is what the operator saw as "black frames where titles go").
-  Next job: `biopics-v3`, same plan plus one title card per entry.
+  `biopics-v3` (applied 2026-09-21, files in `work/biopics-v3/`): title
+  cards per entry, single-shot face-first cuts. Only five films had footage
+  (Goodfellas #1, Wolf of Wall Street #2, Theory of Everything #3, Hacksaw
+  Ridge #4, Moneyball #5), so entries #8 to #6 (16.1 s to 32.3 s, 28 quick
+  cuts) are still the black placeholder with placeholder cards. The 14.3 s
+  roulette bed at 0 s also crosses shot cuts; current `check` rejects that.
+  Next job: `biopics-v4` once the operator adds footage for three more
+  biopics and has reviewed v3; build it from v3's plan and `learn` output.
 - The template's eight ranked entries each carry a **photo slot** (tracks 5 to
   7, one per entry) that held poster or title art. Photo slots take images
   only. Render one per entry with `capcut-recreate titlecard "FILM|Person"`

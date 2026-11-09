@@ -116,7 +116,7 @@ def validate_plan_full(plan: Plan, manifest: Manifest, index: FootageIndex) -> t
         is_photo_slot = slot.material_type == "photo"
         if is_photo_slot and clip.kind != "image":
             errors.append(f"media slot {m.slot_id}: photo slot (template showed a still image) needs an image clip, "
-                          f"not video {m.clip_id}; make one with `capcut-recreate titlecard` or index a poster")
+                          f"not video {m.clip_id}; make one with `capcut-recreate titlecard`, index a poster, or use keep: true to leave the template still")
             continue
         if not is_photo_slot and clip.kind == "image":
             errors.append(f"media slot {m.slot_id}: video slot cannot take image clip {m.clip_id}")
