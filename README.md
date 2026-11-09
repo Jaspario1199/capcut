@@ -29,7 +29,7 @@ can retime them safely.
 ## Install
 
 ```bash
-npm install -g capcut-cli@0.25.0     # pinned; re-run the tests before bumping
+npm install -g capcut-cli@0.33.1     # pinned; re-run the tests before bumping
 # ffmpeg + ffprobe on PATH
 pip install -e ".[dev]"              # add [scenes] for PySceneDetect scene cuts
 ```

@@ -99,6 +99,18 @@ Format facts learned from this build:
   source range runs past the detected scene's end. Crossing a cut adds a cut
   the template never had, off the template's beat.
 
+- **capcut-cli 0.25.0 -> 0.33.1 (2026-11-09):** full suite passes. One
+  behaviour change: `relink` now leaves a relative path alone when it resolves
+  inside the draft, while `lint` still resolves relative paths against the cwd,
+  so `apply` anchors any remaining relative prefix with `relink --from <prefix>
+  --to <job>/<prefix>`. A fixture stamped CapCut mobile 14.8.0 is refused
+  without `--allow-untested-version` and applies cleanly with it (test).
+  CapCut desktop 10.x is write-guarded by capcut-cli; stay on 9.5.
+- **Shot detectors (2026-11-09):** `index --detector content|adaptive|transnet`.
+  On a synthetic clip with hard cuts, a dissolve and 3 s of heavy motion, all
+  three found every cut and no false ones; TransNetV2 put the dissolve at its
+  midpoint, the others at its end. Default stays `content`.
+
 ## 6. Phase 1: template preparation (once per template)
 
 1. **Preflight.** Run `capcut diagnose`. With custom code, compare the hash of the root timeline document against `Timelines/<main_timeline_id>/draft_info.json` when that exists. Abort on mismatch, since `init --template` clones the root document and a stale root means cloning something other than what the editor shows. A binary `template-2.tmp` is expected on 8.7+ and is not drift.

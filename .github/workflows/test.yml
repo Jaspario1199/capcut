@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: "3.11"
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg
-      - run: npm install -g capcut-cli@0.25.0
+      - run: npm install -g capcut-cli@0.33.1
       - run: capcut --version && ffprobe -version | head -1
       - run: pip install -e ".[dev]"
       - run: pytest -q

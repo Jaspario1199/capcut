@@ -12,9 +12,10 @@ license = { text = "MIT" }
 dependencies = []
 
 [project.optional-dependencies]
-scenes = ["scenedetect[opencv]>=0.6"]
+scenes = ["scenedetect[opencv]>=0.7.3"]
 llm = ["anthropic>=1.7"]
 cards = ["pillow>=10"]
+shots-nn = ["transnetv2-pytorch>=1.0.5"]
 dev = ["pytest>=8", "pillow>=10"]
 
 [project.scripts]

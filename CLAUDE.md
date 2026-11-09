@@ -100,7 +100,7 @@ python -m capcut_recreate.cli learn "$store\biopics-v1"
 ```
 
 `python -m capcut_recreate.cli` and `capcut-recreate` are the same thing.
-`capcut` is the capcut-cli binary (0.25.0, pinned); on this machine `capcut.cmd`
+`capcut` is the capcut-cli binary (0.33.1, pinned); on this machine `capcut.cmd`
 also works.
 
 ## Rules
