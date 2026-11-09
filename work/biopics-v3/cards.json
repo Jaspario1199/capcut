@@ -1,0 +1,172 @@
+{
+  "clips": [
+    {
+      "clip_id": "c00",
+      "path": "C:\\Users\\jaspe\\capcut\\staging\\d365bb0691_card01_rank8_n8.png",
+      "original_name": "card01_rank8_n8.png",
+      "md5": "d365bb06912effa4d3eb41771229fd5f",
+      "duration_us": 0,
+      "fps": 0.0,
+      "width": 447,
+      "height": 447,
+      "has_audio": false,
+      "vfr": false,
+      "scenes": [
+        {
+          "scene_id": "s0",
+          "start_us": 0,
+          "end_us": 0,
+          "thumbnail": "C:\\Users\\jaspe\\capcut\\staging\\thumbs\\c00_s0_00000000ms.jpg"
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "clip_id": "c01",
+      "path": "C:\\Users\\jaspe\\capcut\\staging\\dade6787a7_card02_rank7_n7.png",
+      "original_name": "card02_rank7_n7.png",
+      "md5": "dade6787a749561c82720aa3199db8c5",
+      "duration_us": 0,
+      "fps": 0.0,
+      "width": 1199,
+      "height": 672,
+      "has_audio": false,
+      "vfr": false,
+      "scenes": [
+        {
+          "scene_id": "s0",
+          "start_us": 0,
+          "end_us": 0,
+          "thumbnail": "C:\\Users\\jaspe\\capcut\\staging\\thumbs\\c01_s0_00000000ms.jpg"
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "clip_id": "c02",
+      "path": "C:\\Users\\jaspe\\capcut\\staging\\10095affa4_card03_rank6_n6.png",
+      "original_name": "card03_rank6_n6.png",
+      "md5": "10095affa402367635d1411be094330a",
+      "duration_us": 0,
+      "fps": 0.0,
+      "width": 1400,
+      "height": 933,
+      "has_audio": false,
+      "vfr": false,
+      "scenes": [
+        {
+          "scene_id": "s0",
+          "start_us": 0,
+          "end_us": 0,
+          "thumbnail": "C:\\Users\\jaspe\\capcut\\staging\\thumbs\\c02_s0_00000000ms.jpg"
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "clip_id": "c03",
+      "path": "C:\\Users\\jaspe\\capcut\\staging\\0e1fdce698_card04_rank5_moneyball.png",
+      "original_name": "card04_rank5_moneyball.png",
+      "md5": "0e1fdce6983a3be53aaf737646b6ef8e",
+      "duration_us": 0,
+      "fps": 0.0,
+      "width": 800,
+      "height": 310,
+      "has_audio": false,
+      "vfr": false,
+      "scenes": [
+        {
+          "scene_id": "s0",
+          "start_us": 0,
+          "end_us": 0,
+          "thumbnail": "C:\\Users\\jaspe\\capcut\\staging\\thumbs\\c03_s0_00000000ms.jpg"
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "clip_id": "c04",
+      "path": "C:\\Users\\jaspe\\capcut\\staging\\3aaba9d7a6_card05_rank4_hacksaw_ridge.png",
+      "original_name": "card05_rank4_hacksaw_ridge.png",
+      "md5": "3aaba9d7a66747e6816125d3d431c047",
+      "duration_us": 0,
+      "fps": 0.0,
+      "width": 588,
+      "height": 333,
+      "has_audio": false,
+      "vfr": false,
+      "scenes": [
+        {
+          "scene_id": "s0",
+          "start_us": 0,
+          "end_us": 0,
+          "thumbnail": "C:\\Users\\jaspe\\capcut\\staging\\thumbs\\c04_s0_00000000ms.jpg"
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "clip_id": "c05",
+      "path": "C:\\Users\\jaspe\\capcut\\staging\\d66fb18ed1_card06_rank3_the_theory_of_everything.png",
+      "original_name": "card06_rank3_the_theory_of_everything.png",
+      "md5": "d66fb18ed10500e230bae529980a4d91",
+      "duration_us": 0,
+      "fps": 0.0,
+      "width": 706,
+      "height": 1000,
+      "has_audio": false,
+      "vfr": false,
+      "scenes": [
+        {
+          "scene_id": "s0",
+          "start_us": 0,
+          "end_us": 0,
+          "thumbnail": "C:\\Users\\jaspe\\capcut\\staging\\thumbs\\c05_s0_00000000ms.jpg"
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "clip_id": "c06",
+      "path": "C:\\Users\\jaspe\\capcut\\staging\\736ae92850_card07_rank2_the_wolf_of_wall_street.png",
+      "original_name": "card07_rank2_the_wolf_of_wall_street.png",
+      "md5": "736ae928501ddf6d4cce95ed0a1c4eb0",
+      "duration_us": 0,
+      "fps": 0.0,
+      "width": 842,
+      "height": 317,
+      "has_audio": false,
+      "vfr": false,
+      "scenes": [
+        {
+          "scene_id": "s0",
+          "start_us": 0,
+          "end_us": 0,
+          "thumbnail": "C:\\Users\\jaspe\\capcut\\staging\\thumbs\\c06_s0_00000000ms.jpg"
+        }
+      ],
+      "kind": "image"
+    },
+    {
+      "clip_id": "c07",
+      "path": "C:\\Users\\jaspe\\capcut\\staging\\2c725f1237_card08_rank1_goodfellas.png",
+      "original_name": "card08_rank1_goodfellas.png",
+      "md5": "2c725f1237df5c57daf272c41e4c2a00",
+      "duration_us": 0,
+      "fps": 0.0,
+      "width": 960,
+      "height": 570,
+      "has_audio": false,
+      "vfr": false,
+      "scenes": [
+        {
+          "scene_id": "s0",
+          "start_us": 0,
+          "end_us": 0,
+          "thumbnail": "C:\\Users\\jaspe\\capcut\\staging\\thumbs\\c07_s0_00000000ms.jpg"
+        }
+      ],
+      "kind": "image"
+    }
+  ]
+}
