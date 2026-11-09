@@ -19,6 +19,11 @@ capcut-recreate manifest <template-dir> -o manifest.json --thumbs ./thumbs
 capcut-recreate index ./staging <clips and images...> -o footage.json
 ```
 
+`index --detector adaptive` handles camera motion better than the default
+`content`; `--detector transnet` (neural, needs `pip install -e ".[shots-nn]"`,
+about 1 GB with PyTorch) is the most precise on fast cuts and dissolves. Use
+it when `check` passes but cuts still land mid-shot.
+
 `index` takes mp4/mov and png/jpg alike; images become `kind: "image"` clips
 with one scene and are the only thing a photo slot accepts.
 

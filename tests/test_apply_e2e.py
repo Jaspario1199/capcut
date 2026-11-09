@@ -156,3 +156,29 @@ def test_preflight_refuses_untested_version(template_dir, store, monkeypatch):
         apply_mod.preflight(template_dir, store)
     pre = apply_mod.preflight(template_dir, store, allow_untested_version=True)
     assert pre["support"]["write_guard"] == "refuse"
+
+
+def test_mobile_stamped_template_needs_the_flag_then_applies(manifest, footage_index, tmp_path):
+    """Templates made on CapCut mobile carry its version (14.x). capcut-cli's guard refuses them;
+    --allow-untested-version must get through and the result must still validate cleanly."""
+    from capcut_recreate.apply import preflight
+    from capcut_recreate.manifest import build_manifest
+
+    tpl = tmp_path / "mobile_tpl"
+    shutil.copytree(Path(manifest.template_dir), tpl)
+    doc = json.loads((tpl / "draft_content.json").read_text())
+    doc["platform"] = {"app_source": "cc", "app_version": "14.8.0", "os": "ios"}
+    doc["last_modified_platform"] = {"app_source": "cc", "app_version": "9.5.0", "os": "windows"}
+    (tpl / "draft_content.json").write_text(json.dumps(doc))
+    store = tmp_path / "store_mobile"
+    store.mkdir()
+
+    with pytest.raises(ApplyError, match="14.8.0"):
+        preflight(tpl, store)
+    preflight(tpl, store, allow_untested_version=True)
+
+    m = build_manifest(tpl)
+    errors, resolved = validate_plan(plan(job="mobile"), m, footage_index)
+    assert errors == []
+    report = apply_plan(plan(job="mobile"), m, resolved, store, template_dir=tpl, allow_untested_version=True)
+    assert report.ok and report.invariant_errors == [] and report.diff_violations == []

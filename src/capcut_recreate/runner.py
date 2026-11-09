@@ -15,7 +15,7 @@ import subprocess
 from dataclasses import dataclass
 from typing import Any
 
-PINNED_VERSION = "0.25.0"
+PINNED_VERSION = "0.33.1"
 
 
 class CliNotFound(Exception):

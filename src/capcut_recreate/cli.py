@@ -57,7 +57,7 @@ def cmd_manifest(a) -> int:
 
 def cmd_index(a) -> int:
     idx = stage_footage([Path(p) for p in a.clips], Path(a.staging), scene_threshold=a.scene_threshold,
-                        thumbnails=not a.no_thumbs)
+                        thumbnails=not a.no_thumbs, detector=a.detector)
     _dump(idx.to_json(), a.out)
     return 0
 
@@ -249,7 +249,12 @@ def main(argv: list[str] | None = None) -> int:
     s.set_defaults(fn=cmd_manifest)
 
     s = sub.add_parser("index"); s.add_argument("staging"); s.add_argument("clips", nargs="+"); s.add_argument("-o", "--out")
-    s.add_argument("--scene-threshold", type=float, default=27.0); s.add_argument("--no-thumbs", action="store_true")
+    s.add_argument("--scene-threshold", type=float, default=None,
+                   help="detector sensitivity; default is each detector's own (content 27, adaptive 3, transnet 0.5)")
+    s.add_argument("--detector", default="content", choices=["content", "adaptive", "transnet"],
+                   help="shot-boundary detector: content (default), adaptive (better on camera motion), "
+                        "transnet (neural, best on fast cuts; needs the shots-nn extra)")
+    s.add_argument("--no-thumbs", action="store_true")
     s.set_defaults(fn=cmd_index)
 
     s = sub.add_parser("titlecard", help="render a PNG title card for a photo slot")

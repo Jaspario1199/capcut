@@ -1,6 +1,6 @@
 """Phase 4: apply a validated plan inside a drafts store.
 
-Sequence (each step verified by the adversarial review against capcut-cli 0.25.0):
+Sequence (each step verified against capcut-cli 0.25.0, re-verified on 0.33.1):
 
   1. capcut init <job> --template <template> --drafts <store>
   2. per media slot: capcut replace-media <seg> <clip>   (no --retime)
@@ -159,6 +159,11 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
             adir = job_dir / "assets" / kind
             if adir.is_dir():
                 runner.run("relink", str(doc_path), dir=str(adir), force_write=fw)
+        # capcut-cli >= 0.26 relink leaves a relative path alone when it resolves
+        # inside the draft, but lint still resolves it against the cwd. Anchor
+        # every remaining relative prefix (normally "assets") to the job folder.
+        for prefix in _relative_prefixes(load_doc(job_dir)):
+            runner.run("relink", str(doc_path), **{"from": prefix, "to": str(job_dir / prefix)}, force_write=fw)
         _check_relink(template_doc, load_doc(job_dir), job_dir)
 
         media_slots = manifest.media_by_id()
@@ -241,6 +246,20 @@ def apply_plan(plan: Plan, manifest: Manifest, resolved: list[ResolvedMedia], st
         shutil.rmtree(job_dir, ignore_errors=True)
         _drop_root_entry(store, str(job_dir))
         raise
+
+
+def _relative_prefixes(doc: dict[str, Any]) -> list[str]:
+    """First path component of every relative, non-placeholder media path."""
+    out: set[str] = set()
+    for cat in ("videos", "audios"):
+        for m in doc.get("materials", {}).get(cat, []):
+            p = m.get("path")
+            if not isinstance(p, str) or not p or p.startswith("http") or is_placeholder_path(p):
+                continue
+            if Path(p).is_absolute() or re.match(r"^[A-Za-z]:[\\/]", p):
+                continue
+            out.add(re.split(r"[\\/]", p, maxsplit=1)[0])
+    return sorted(out)
 
 
 def _check_relink(template_doc: dict[str, Any], new_doc: dict[str, Any], job_dir: Path) -> None:

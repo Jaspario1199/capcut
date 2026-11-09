@@ -118,25 +118,87 @@ def probe_clip(path: Path, clip_id: str, ffprobe_cmd: str = "ffprobe") -> Clip:
     )
 
 
-def detect_scenes(path: Path, duration_us: int, threshold: float = 27.0) -> list[Scene]:
+DETECTORS = ("content", "adaptive", "transnet")
+
+
+def _to_scenes(bounds: list[tuple[float, float]], duration_us: int) -> list[Scene]:
+    """(start_s, end_s) pairs -> Scene list; whole clip when nothing was found."""
+    if not bounds:
+        return [Scene("s0", 0, duration_us)]
+    return [Scene(f"s{i}", int(a * US), int(b * US)) for i, (a, b) in enumerate(bounds)]
+
+
+def _secs(tc) -> float:
+    """FrameTimecode in seconds: `.seconds` on PySceneDetect 0.7+, get_seconds() before."""
+    v = getattr(tc, "seconds", None)
+    return float(v) if v is not None else float(tc.get_seconds())
+
+
+def _detect_pyscenedetect(path: Path, kind: str, threshold: float | None) -> list[tuple[float, float]]:
+    from scenedetect import AdaptiveDetector, ContentDetector, detect  # type: ignore
+
+    if kind == "adaptive":
+        det = AdaptiveDetector() if threshold is None else AdaptiveDetector(adaptive_threshold=threshold)
+    else:
+        det = ContentDetector(threshold=27.0 if threshold is None else threshold)
+    return [(_secs(a), _secs(b)) for a, b in detect(str(path), det)]
+
+
+_TRANSNET = None
+
+
+def _detect_transnet(path: Path, threshold: float | None) -> list[tuple[float, float]]:
+    """TransNetV2 neural shot-boundary detection (pip install 'capcut-recreate[shots-nn]').
+
+    Better than threshold detectors on fast trailer cuts and dissolves. CPU is fine:
+    the network looks at 48x27 frames.
+    """
+    global _TRANSNET
     try:
-        from scenedetect import ContentDetector, detect  # type: ignore
+        import torch  # type: ignore
+        from transnetv2_pytorch import TransNetV2  # type: ignore
+    except ImportError as e:
+        raise FootageError("detector 'transnet' needs pip install 'capcut-recreate[shots-nn]'") from e
+    if _TRANSNET is None:
+        _TRANSNET = TransNetV2(device="cpu")
+        _TRANSNET.eval()
+    with torch.no_grad():
+        kwargs = {} if threshold is None else {"threshold": threshold}
+        found = _TRANSNET.detect_scenes(str(path), **kwargs)
+    out = []
+    for sc in found:
+        if isinstance(sc, dict):
+            a, b = sc.get("start_time"), sc.get("end_time")
+        else:
+            a, b = sc[0], sc[1]
+        out.append((float(a), float(b)))
+    return out
+
+
+def detect_scenes(path: Path, duration_us: int, threshold: float | None = None,
+                  detector: str = "content") -> list[Scene]:
+    """Shot list for a clip.
+
+    A missing optional backend for 'content'/'adaptive' degrades to one
+    whole-clip scene (the planner then has no shot boundaries to respect);
+    'transnet' was asked for explicitly, so its absence is an error.
+    """
+    if detector not in DETECTORS:
+        raise FootageError(f"unknown detector {detector!r}; choose one of {', '.join(DETECTORS)}")
+    if detector == "transnet":
+        return _to_scenes(_detect_transnet(path, threshold), duration_us)
+    try:
+        bounds = _detect_pyscenedetect(path, detector, threshold)
+    except ImportError:
+        return [Scene("s0", 0, duration_us)]
     except Exception:
         return [Scene("s0", 0, duration_us)]
-    try:
-        cuts = detect(str(path), ContentDetector(threshold=threshold))
-    except Exception:
-        return [Scene("s0", 0, duration_us)]
-    if not cuts:
-        return [Scene("s0", 0, duration_us)]
-    scenes = []
-    for i, (start, end) in enumerate(cuts):
-        scenes.append(Scene(f"s{i}", int(start.get_seconds() * US), int(end.get_seconds() * US)))
-    return scenes
+    return _to_scenes(bounds, duration_us)
 
 
 def stage_footage(sources: list[Path], staging_dir: Path, ffprobe_cmd: str = "ffprobe",
-                  scene_threshold: float = 27.0, thumbnails: bool = True) -> FootageIndex:
+                  scene_threshold: float | None = None, thumbnails: bool = True,
+                  detector: str = "content") -> FootageIndex:
     """Copy clips into staging_dir under unique names and index them."""
     from .thumbs import ThumbError, extract_frame, ffmpeg_available, thumb_name
 
@@ -180,7 +242,7 @@ def stage_footage(sources: list[Path], staging_dir: Path, ffprobe_cmd: str = "ff
                 clip.scenes[0].thumbnail = str(dest)
             clips.append(clip)
             continue
-        clip.scenes = detect_scenes(dest, clip.duration_us, scene_threshold)
+        clip.scenes = detect_scenes(dest, clip.duration_us, scene_threshold, detector=detector)
         if thumbnails and ffmpeg_available():
             for sc in clip.scenes:
                 out = thumbs_dir / thumb_name(f"{clip_id}_{sc.scene_id}", sc.start_us)
